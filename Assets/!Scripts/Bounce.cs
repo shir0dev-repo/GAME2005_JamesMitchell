@@ -4,15 +4,19 @@ using UnityEngine;
 
 public class Bounce : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    private float _velocity = 0.0f;
 
-    // Update is called once per frame
-    void Update()
+    private Vector3 _forceDirection = Vector3.zero;
+
+    private void FixedUpdate()
     {
-        
+        _forceDirection = transform.position;
+        _velocity += Physics.gravity.y * Time.fixedDeltaTime;
+        _forceDirection.y += _velocity * Time.fixedDeltaTime;
+
+        transform.position = _forceDirection;
+
+        if (transform.position.y < -1 && _velocity < 0f)
+            _velocity *= -1f;
     }
 }
