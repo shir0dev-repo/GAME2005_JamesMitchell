@@ -6,17 +6,15 @@ public class Bounce : MonoBehaviour
 {
     private float _velocity = 0.0f;
 
-    private Vector3 _forceDirection = Vector3.zero;
+    private readonly float _sphereRadius = 0.5f;
 
     private void FixedUpdate()
     {
-        _forceDirection = transform.position;
         _velocity += Physics.gravity.y * Time.fixedDeltaTime;
-        _forceDirection.y += _velocity * Time.fixedDeltaTime;
 
-        transform.position = _forceDirection;
+        transform.position += Time.fixedDeltaTime * _velocity * Vector3.up;
 
-        if (transform.position.y < -1 && _velocity < 0f)
+        if (transform.position.y < _sphereRadius && _velocity < 0f)
             _velocity *= -1f;
     }
 }
