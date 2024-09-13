@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Bounce : MonoBehaviour
 {
-    public float _velocity = 0.0f;
+    [SerializeField, ReadOnly] private float _velocity = 0.0f;
 
     private readonly float _sphereRadius = 0.5f;
     private static readonly float _acceleration = Physics.gravity.y;
