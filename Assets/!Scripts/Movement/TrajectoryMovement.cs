@@ -16,6 +16,10 @@ public class TrajectoryMovement : Movement
     [SerializeField] private bool _showTrajectory = false;
     [SerializeField, Range(1, 50)] private int _arcSamples = 25;
 
+    [Header("Debugging")]
+    [SerializeField] private bool _allowReflexAngles = false;
+    [SerializeField] private bool _allowNegativeAngles = false;
+
     private Vector3[] arc;
 
     private void Start()
@@ -25,6 +29,8 @@ public class TrajectoryMovement : Movement
     
     void Update()
     {
+        if (_projectile == null) return;
+
         if (!_projectile.activeSelf && Input.GetKeyDown(KeyCode.Space))
         {
             _projectile.SetActive(true);
@@ -38,24 +44,25 @@ public class TrajectoryMovement : Movement
         if (_timeSinceLaunch >= _lifetime) _projectile.SetActive(false);
         else if (_projectile.activeSelf)
         {
-            _timeSinceLaunch += Time.fixedDeltaTime;
             _projectile.transform.localPosition = _launchDetails.getPositionAtPoint(_timeSinceLaunch);
-
+            _timeSinceLaunch += Time.fixedDeltaTime;
         }
     }
 
     private void OnValidate()
     {
+        if (!_allowReflexAngles && _launchDetails.LaunchAngle > 90f)
+            _launchDetails.LaunchAngle = 90f;
+        if (!_allowNegativeAngles && _launchDetails.LaunchAngle < 0f)
+            _launchDetails.LaunchAngle = 0f;
+
         _launchDetails.Init();
         arc = _launchDetails.GetTrajectoryArcLocal(_arcSamples, _lifetime, transform);
     }
 
-    private void OnDrawGizmosSelected()
+    private void OnDrawGizmos()
     {
         if (!_showTrajectory) return;
-
-        if (_launchDetails.InitialVelocity == Vector2.zero)
-            _launchDetails.Init();
 
         Gizmos.color = Color.red;
         
