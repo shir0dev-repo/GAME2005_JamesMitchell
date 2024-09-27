@@ -5,13 +5,15 @@ using UnityEngine;
 [RequireComponent(typeof(Gravity))]
 public class Trajectory : PhysicsComponent
 {
-    private float m_initialAngleDegrees = 30;
-    private float m_initialAngleRadians = 0;
-    private float m_initialSpeed = 10;
     private Vector3 m_startingVelocity = Vector3.zero;
     private float m_timeSinceLaunch = 0;
 
     [SerializeField] private Gravity m_gravity;
+
+    private void Awake()
+    {
+        Destroy(gameObject, 3f);
+    }
 
     public void InitParams(float initialAngleDegrees, float initialSpeed)
     {

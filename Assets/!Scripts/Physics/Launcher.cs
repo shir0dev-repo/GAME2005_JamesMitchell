@@ -6,12 +6,14 @@ public class Launcher : MonoBehaviour
 {
     [SerializeField] private float m_initialAngleDegrees = 30;
     [SerializeField] private float m_initialSpeed = 10;
+    [SerializeField] private float m_startingHeight = 0;
     [Space]
 
     [SerializeField] private Trajectory m_projectilePF;
     [SerializeField] private GameObject m_turretHead;
     private void Update()
     {
+        transform.position = new Vector3(transform.position.x, m_startingHeight, transform.position.z);
         m_turretHead.transform.rotation = Quaternion.Euler(0, 0, m_initialAngleDegrees);
 
         if (Input.GetKeyDown(KeyCode.Space))
