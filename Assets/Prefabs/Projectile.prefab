@@ -14,6 +14,8 @@ GameObject:
   - component: {fileID: 1877166974250225335}
   - component: {fileID: 6087199932541292416}
   - component: {fileID: 2725762235631786612}
+  - component: {fileID: 2246524411470358344}
+  - component: {fileID: 7601925409960285129}
   - component: {fileID: -5581783580525562175}
   m_Layer: 0
   m_Name: Projectile
@@ -100,10 +102,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_mass: 1
-  m_dragCoefficient: 1
+  m_dragCoefficient: 5
   m_velocity: {x: 0, y: 0, z: 0}
   physicsComponents:
   - {fileID: 6087199932541292416}
+  - {fileID: 2246524411470358344}
 --- !u!114 &6087199932541292416
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -132,6 +135,34 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_velocity: {x: 0, y: -9.81, z: 0}
   m_gravityScale: 1
+--- !u!114 &2246524411470358344
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4649570677929316944}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c71c7a7941493d543ab92e8c8d39f345, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_velocity: {x: 0, y: 0, z: 0}
+  m_body: {fileID: 0}
+  m_shape: {fileID: 0}
+--- !u!114 &7601925409960285129
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4649570677929316944}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3027e9582e3ed4f48bc2766e1ec9a65e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_radius: 0.25
 --- !u!114 &-5581783580525562175
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -7,7 +7,7 @@ public class SimpleBounceCollision : PhysicsComponent
     [SerializeField] private float m_collisionHeight = 0;
     [SerializeField] private float m_collisionRadius = 0.5f;
 
-    public override Vector3 ApplyToObject(ref Vector3 initial)
+    public override Vector3 ApplyToObject(Vector3 initial)
     {
         if (transform.position.y < m_collisionHeight + m_collisionRadius)
             initial = -initial + (Vector3.up * initial.y) * PhysicsManager.Instance.DeltaTime;

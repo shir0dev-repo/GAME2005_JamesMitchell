@@ -5,9 +5,15 @@ using UnityEngine;
 public class PhysicsBody : MonoBehaviour
 {
     [SerializeField] protected float m_mass = 1f;
+    public float Mass => m_mass;
+
     [SerializeField] protected float m_dragCoefficient = 1f;
+    public float Drag => m_dragCoefficient;
+
     [SerializeField, ReadOnly] protected Vector3 m_velocity = Vector3.zero;
     [SerializeField] private PhysicsComponent[] physicsComponents;
+
+    private int frameCount = 0;
 
     protected virtual void Start()
     {
@@ -18,7 +24,7 @@ public class PhysicsBody : MonoBehaviour
     {
         foreach (var physicsComponent in physicsComponents)
         {
-            physicsComponent.ApplyToObject(ref m_velocity);
+            //m_velocity += physicsComponent.ApplyToObject(m_velocity);
         }
 
         transform.position += m_velocity * PhysicsManager.Instance.DeltaTime;

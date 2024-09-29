@@ -6,5 +6,5 @@ public abstract class PhysicsComponent : MonoBehaviour
 {
     [SerializeField] protected Vector3 m_velocity = Vector3.zero;
 
-    public abstract Vector3 ApplyToObject(ref Vector3 initial);
+    public abstract Vector3 ApplyToObject(Vector3 initial);
 }

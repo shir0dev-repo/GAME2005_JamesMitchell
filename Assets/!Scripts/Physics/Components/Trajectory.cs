@@ -12,7 +12,7 @@ public class Trajectory : PhysicsComponent
 
     private void Awake()
     {
-        Destroy(gameObject, 3f);
+        //Destroy(gameObject, 3f);
     }
 
     public void InitParams(float initialAngleDegrees, float initialSpeed)
@@ -23,10 +23,10 @@ public class Trajectory : PhysicsComponent
         m_startingVelocity.y = initialSpeed * Mathf.Sin(initialAngleRadians);
     }
 
-    public override Vector3 ApplyToObject(ref Vector3 initial)
+    public override Vector3 ApplyToObject(Vector3 initial)
     {
-        initial.x = m_startingVelocity.x * m_timeSinceLaunch;
-        initial.y = m_startingVelocity.y * m_timeSinceLaunch + (0.5f * m_gravity.GravityForce.y * Mathf.Pow(m_timeSinceLaunch, 2));
+        initial.x += m_startingVelocity.x * PhysicsManager.Instance.DeltaTime;
+        //initial.y = m_startingVelocity.y * m_timeSinceLaunch + (0.5f * m_gravity.GravityForce.y * Mathf.Pow(m_timeSinceLaunch, 2));
 
         m_timeSinceLaunch += PhysicsManager.Instance.DeltaTime;
         return initial;

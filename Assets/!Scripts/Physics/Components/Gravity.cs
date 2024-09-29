@@ -8,9 +8,9 @@ public class Gravity : PhysicsComponent
 
     public Vector3 GravityForce => m_velocity * m_gravityScale;
 
-    public override Vector3 ApplyToObject(ref Vector3 initial)
+    public override Vector3 ApplyToObject(Vector3 initial)
     {
-        initial += m_gravityScale * PhysicsManager.Instance.DeltaTime * m_velocity;
+        initial += m_gravityScale * PhysicsManager.Instance.DeltaTime *PhysicsManager.Instance.DeltaTime * m_velocity;
         return initial;
     }
 }
