@@ -29,6 +29,7 @@ public class Trajectory : PhysicsComponent
         initial.y = m_startingVelocity.y * m_timeSinceLaunch + (0.5f * m_gravity.GravityForce.y * Mathf.Pow(m_timeSinceLaunch, 2));
 
         m_timeSinceLaunch += PhysicsManager.Instance.DeltaTime;
+        transform.LookAt(initial);
         return initial;
     }
 }
