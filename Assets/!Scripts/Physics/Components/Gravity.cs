@@ -2,15 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Gravity : PhysicsComponent
+public class Gravity : PhysicsComponentBase
 {
     [SerializeField] float m_gravityScale = 1;
+    [SerializeField] private Vector3 m_gravity = 9.81f * Vector3.down;
 
-    public Vector3 GravityForce => m_velocity * m_gravityScale;
-
-    public override Vector3 ApplyToObject(Vector3 initial)
+    public override Vector3 Modify(Vector3 initial)
     {
-        initial += m_gravityScale * PhysicsManager.Instance.DeltaTime *PhysicsManager.Instance.DeltaTime * m_velocity;
-        return initial;
+        return initial + m_gravityScale * PhysicsManager.Instance.DeltaTime * m_gravity;
     }
 }

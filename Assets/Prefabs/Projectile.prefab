@@ -17,6 +17,7 @@ GameObject:
   - component: {fileID: 2246524411470358344}
   - component: {fileID: 7601925409960285129}
   - component: {fileID: -5581783580525562175}
+  - component: {fileID: -8316896217248441520}
   m_Layer: 0
   m_Name: Projectile
   m_TagString: Untagged
@@ -119,7 +120,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d17d14036fb9a474aba7bbcbceb34bc3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_velocity: {x: 0, y: 0, z: 0}
   m_gravity: {fileID: 2725762235631786612}
 --- !u!114 &2725762235631786612
 MonoBehaviour:
@@ -133,7 +133,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 431bd22e5a97c694a95a32ede49ec3e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_velocity: {x: 0, y: -9.81, z: 0}
   m_gravityScale: 1
 --- !u!114 &2246524411470358344
 MonoBehaviour:
@@ -175,3 +174,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4961cfe0eadc2c0499c91ae42dd35203, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &-8316896217248441520
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4649570677929316944}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a83f02ba6edcb18478660fda8e9af0a4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_collisionHeight: -1
+  m_collisionRadius: 0.5

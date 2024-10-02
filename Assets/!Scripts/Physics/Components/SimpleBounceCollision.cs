@@ -2,15 +2,19 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SimpleBounceCollision : PhysicsComponent
+public class SimpleBounceCollision : PhysicsComponentBase
 {
     [SerializeField] private float m_collisionHeight = 0;
     [SerializeField] private float m_collisionRadius = 0.5f;
 
-    public override Vector3 ApplyToObject(Vector3 initial)
+    public override Vector3 Modify(Vector3 initial)
     {
         if (transform.position.y < m_collisionHeight + m_collisionRadius)
-            initial = -initial + (Vector3.up * initial.y) * PhysicsManager.Instance.DeltaTime;
+        {
+            Vector3 groundNormal = Vector3.up;
+            Vector3 reflection = Vector3.Reflect(initial.normalized, groundNormal);
+            initial = reflection.normalized * initial.magnitude;
+        }
         return initial;
     }
 
