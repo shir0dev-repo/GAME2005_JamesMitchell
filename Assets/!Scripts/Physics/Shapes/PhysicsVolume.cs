@@ -1,8 +1,6 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using UnityEngine;
 
 public class PhysicsVolume
@@ -18,7 +16,7 @@ public class PhysicsVolume
 
     private Vector3[] m_points = new Vector3[8];
     public Vector3[] Points => m_points;
-    
+
     public PhysicsVolume(Vector3 center, Quaternion rotation, Vector3 halfExtents)
     {
         m_center = center;
@@ -29,8 +27,6 @@ public class PhysicsVolume
 
     public void CalculateShape()
     {
-        Array.Fill(m_points, m_rotation * m_center);
-        // create 8 axis aligned points
         m_points[0] = m_rotation * new Vector3(m_halfExtents.x, -m_halfExtents.y, m_halfExtents.z); // rbf
         m_points[1] = m_rotation * new Vector3(-m_halfExtents.x, -m_halfExtents.y, m_halfExtents.z); // lbf
         m_points[2] = m_rotation * new Vector3(m_halfExtents.x, m_halfExtents.y, m_halfExtents.z); // rtf
@@ -39,8 +35,6 @@ public class PhysicsVolume
         m_points[5] = m_rotation * new Vector3(-m_halfExtents.x, -m_halfExtents.y, -m_halfExtents.z); // lbb
         m_points[6] = m_rotation * new Vector3(m_halfExtents.x, m_halfExtents.y, -m_halfExtents.z); // rtb
         m_points[7] = m_rotation * new Vector3(-m_halfExtents.x, m_halfExtents.y, -m_halfExtents.z); // ltb
-
-       
     }
 
     public void UpdatePositionAndRotation(Vector3 center, Quaternion rotation)
@@ -52,97 +46,117 @@ public class PhysicsVolume
 
     public float CrossSectionalArea(Vector3 inNormal)
     {
-        Vector3 normal = Vector3.Normalize(inNormal);
 
-        List<Vector3> projectedPoints = ProjectPoints(m_points, normal);
+        inNormal = inNormal.normalized;
+        Debug.DrawLine(m_center, m_center + inNormal, Color.green);
+        // all points are in "plane space" (x,y) relative to origin of plane
+        List<Vector3> projectedPoints = ProjectPointsToPlaneSpace(m_points, inNormal, out (Vector3 tangent, Vector3 bitangent) axes);
 
-        Vector3 p0 = projectedPoints[0];
-
-        foreach (Vector3 p in projectedPoints)
+        Vector3 initial = new(Mathf.Infinity, Mathf.Infinity);
+        foreach (Vector3 point in projectedPoints)
         {
-            if (p.y < p0.y || (p.y == p0.y && p.x < p0.x)) p0 = p;
+            if (point.y < initial.y) initial = point;
+            else if (point.y == initial.y && point.x < initial.x) initial = point;
+            else if (point.y == initial.y && point.x == initial.x && point.z < initial.z) initial = point;
         }
-        Debug.DrawLine(m_center, p0, Color.red);
-        projectedPoints.RemoveAll(p => p == p0);
-        Debug.Log(p0);
-        Vector3 axis = Vector3.Cross(p0, normal).normalized;
-        projectedPoints = projectedPoints
-            .Distinct()
-            .OrderBy(p => p.x)/*{
-                float a = Vector3.SignedAngle(p0, p, normal);
-                ;
 
-                return a;
-            })*/
-            .ToList();
+        projectedPoints.Remove(initial);
 
-        foreach (Vector3 p in projectedPoints) Debug.Log(p);
-        Debug.Log(projectedPoints.Count);
-        
+        projectedPoints = projectedPoints.OrderBy(p =>
+        {
+            Vector2 delta = (p - initial).normalized;
+            float angle = Mathf.Atan2(delta.y, delta.x);
+
+            return angle;
+        }).ToList();
+
         Stack<Vector3> hull = new Stack<Vector3>();
-        hull.Push(p0);
+        hull.Push(initial);
 
         foreach (Vector3 point in projectedPoints)
         {
-            while (hull.Count > 1 && Orientation(PeekTwice(hull), hull.Peek(), point, normal) <= 0)
+            if (hull.Count > 1 && Orientation(hull.ToList()[1], hull.Peek(), point) < 0)
                 hull.Pop();
-            
+
             hull.Push(point);
         }
-        List<Vector3> hullList = hull.ToList();
-        Debug.Log(hullList.Count);
-        for (int i = 0; i < hullList.Count - 1; i++)
+        List<Vector3> convexHull = hull.ToList();
+        convexHull.Reverse();
+        List<Vector3> hullWS = new List<Vector3>();
+        hullWS.AddRange(convexHull);
+
+
+
+        for (int i = 0; i < hullWS.Count; i++)
         {
-            Debug.DrawLine(m_center + hullList[i], m_center + hullList[i + 1], Color.blue);
+            hullWS[i] = m_center + (hullWS[i].x * axes.tangent) + (hullWS[i].y * axes.bitangent);
         }
 
-        Debug.DrawLine(m_center + hullList[^1], m_center + hullList[0], Color.blue);
+        for (int i = 0; i < hullWS.Count; i++)
+        {
+            Debug.DrawLine(hullWS[i], hullWS[(i + 1) % hullWS.Count], Color.blue);
+        }
 
-        return ShoelaceTheorem(hullList);
+        Debug.DrawLine(hullWS[^1], hullWS[0], Color.blue);
+
+        return ShoelaceArea(convexHull);
     }
 
-    private float ShoelaceTheorem(List<Vector3> hullList)
+    private float ShoelaceArea(List<Vector3> pointsCCW)
     {
-        float area = 0;
-        for (int i = 0; i < hullList.Count - 1; i++)
+        float area = 0f;
+        int size = pointsCCW.Count;
+        for (int i = 0; i < size; i++)
         {
-            area += (hullList[i].y * hullList[i + 1].z) + (hullList[i].x * hullList[i + 1].y) + (hullList[i + 1].x * hullList[i].z) -
-                    ((hullList[i + 1].x * hullList[i].y) + (hullList[i + 1].y * hullList[i].z) + (hullList[i].x * hullList[i + 1].z));
+            area += (pointsCCW[i].x * pointsCCW[(i + 1) % size].y) - (pointsCCW[(i + 1) % size].x * pointsCCW[i].y);
         }
-        
-        area += (hullList[^1].y * hullList[0].z) + (hullList[^1].x * hullList[0].y) + (hullList[0].x * hullList[^1].z) -
-                    ((hullList[0].x * hullList[^1].y) + (hullList[0].y * hullList[^1].z) + (hullList[^1].x * hullList[0].z));
 
-        area = Mathf.Abs(area) * 0.5f;
-        Debug.Log(area);
-        
+        area += (pointsCCW[size - 1].x * pointsCCW[0].y) - (pointsCCW[0].x * pointsCCW[size - 1].y);
+
+        area = Mathf.Abs(area * 0.5f);
         return area;
     }
 
-    private Vector3 PeekTwice(Stack<Vector3> stack) { return stack.ToList()[stack.Count - 2]; }
-
-    private List<Vector3> ProjectPoints(Vector3[] points, Vector3 normal)
+    private List<Vector3> ProjectPointsToPlaneSpace(Vector3[] m_points, Vector3 inNormal, out (Vector3 tangent, Vector3 bitangent) axes)
     {
         List<Vector3> result = new List<Vector3>();
 
-        for (int i = 0; i < points.Length; i++)
+        if (Mathf.Abs(inNormal.x) > Mathf.Abs(inNormal.y) && Mathf.Abs(inNormal.x) > Mathf.Abs(inNormal.z))
         {
-            Vector3 projected = points[i] - Vector3.Dot(points[i], normal) * normal;
-            Debug.DrawLine(points[i], projected, Color.green);
-            result.Add(projected);
+            axes.tangent = Vector3.Cross(inNormal, Vector3.up).normalized;
+            axes.bitangent = Vector3.Cross(inNormal, axes.tangent).normalized;
+        }
+        else if (Mathf.Abs(inNormal.y) > Mathf.Abs(inNormal.x) && Mathf.Abs(inNormal.y) > Mathf.Abs(inNormal.z))
+        {
+            axes.tangent = Vector3.Cross(inNormal, Vector3.forward);
+            axes.bitangent = Vector3.Cross(inNormal, axes.tangent).normalized;
+        }
+        else
+        {
+            axes.tangent = Vector3.Cross(inNormal, Vector3.up).normalized;
+            axes.bitangent = Vector3.Cross(inNormal, axes.tangent).normalized;
         }
 
+        foreach (Vector3 point in m_points)
+        {
+            Vector3 projectedLocal = new Vector3()
+            {
+                x = Vector3.Dot(point, axes.tangent),
+                y = Vector3.Dot(point, axes.bitangent),
+                z = 0
+            };
+
+            if (!result.Contains(projectedLocal))
+            {
+                result.Add(projectedLocal);
+            }
+        }
         return result;
     }
 
-    private float Orientation(Vector3 p, Vector3 q, Vector3 r, Vector3 normal)
+    private float Orientation(Vector2 p1, Vector2 p2, Vector2 p3)
     {
-        Debug.DrawLine(p, q, Color.magenta);
-        Debug.DrawLine(p, r, Color.magenta);
-        float a = Vector3.SignedAngle(p + q, p + r, normal);
-
-        Debug.Log(a);
-
-        return a;
+        return (p2.x - p1.x) * (p3.y - p1.y) - (p2.y - p1.y) * (p3.x - p1.x); // z-component of the cross product
+        
     }
 }

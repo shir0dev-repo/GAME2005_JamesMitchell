@@ -3,32 +3,35 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 
-public class Drag : PhysicsComponent
+[RequireComponent(typeof(Gravity), typeof(PhysicsShape))]
+public class Drag : PhysicsComponentBase
 {
-    [SerializeField] private PhysicsBody m_body;
     [SerializeField] private PhysicsShape m_shape;
-    
-    private void Awake()
+    [SerializeField] private Gravity m_gravity;
+
+    protected override void Awake()
     {
-        m_body = GetComponent<PhysicsBody>();
+        base.Awake();
         m_shape = GetComponent<PhysicsShape>();
+        m_gravity = GetComponent<Gravity>();
     }
 
-    private void Update()
+    public override Vector3 Modify(Vector3 initial)
     {
-        CalculateDrag(m_velocity, m_body.Drag, m_shape.getBoundingBox());
-    }
-
-    public override Vector3 ApplyToObject(Vector3 initial)
-    {
-        initial += CalculateDrag(in m_velocity, m_body.Drag, m_shape.getBoundingBox()) * PhysicsManager.Instance.DeltaTime;
+        initial += CalculateDrag(initial, m_body.Drag, m_shape.getBoundingBox()) * PhysicsManager.Instance.DeltaTime;
         return initial;
     }
 
-    private Vector3 CalculateDrag(in Vector3 velocity, float dragCoefficient, PhysicsVolume boundingBox)
+    private Vector3 CalculateDrag(Vector3 velocity, float dragCoefficient, PhysicsVolume boundingBox)
     {
-        float Ca = boundingBox.CrossSectionalArea(velocity);
-        Vector3 dragForce = (velocity.sqrMagnitude * 0.5f) * dragCoefficient * Ca * velocity.normalized;
+        Vector3 horizontalVelocity = velocity;
+        horizontalVelocity.y = 0;
+
+        float area = boundingBox.CrossSectionalArea(velocity);
+        Vector3 dragForce = m_body.Mass * m_gravity.GravityScale * m_gravity.GravityDirection;
+        dragForce -= dragCoefficient * (horizontalVelocity.sqrMagnitude * 0.25f) * area * velocity.normalized;
+
+        Debug.Log(-dragForce);
         return dragForce;
     }
 }

@@ -27,6 +27,7 @@ public class Trajectory : PhysicsComponentBase
         else
             initial.x += m_startingVelocity.x * m_timeSinceLaunch * PhysicsManager.Instance.DeltaTime;
 
+        transform.forward = initial.normalized;
         m_timeSinceLaunch += PhysicsManager.Instance.DeltaTime;
         return initial;
     }
