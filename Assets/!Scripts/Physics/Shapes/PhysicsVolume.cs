@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+[System.Serializable]
 public class PhysicsVolume
 {
     private Vector3 m_halfExtents;
@@ -21,7 +22,7 @@ public class PhysicsVolume
     {
         m_center = center;
         m_rotation = rotation;
-        m_halfExtents = halfExtents;
+        m_halfExtents = 0.5f * halfExtents;
         CalculateShape();
     }
 
@@ -48,7 +49,6 @@ public class PhysicsVolume
     {
 
         inNormal = inNormal.normalized;
-        Debug.DrawLine(m_center, m_center + inNormal, Color.green);
         // all points are in "plane space" (x,y) relative to origin of plane
         List<Vector3> projectedPoints = ProjectPointsToPlaneSpace(m_points, inNormal, out (Vector3 tangent, Vector3 bitangent) axes);
 
@@ -82,22 +82,6 @@ public class PhysicsVolume
         }
         List<Vector3> convexHull = hull.ToList();
         convexHull.Reverse();
-        List<Vector3> hullWS = new List<Vector3>();
-        hullWS.AddRange(convexHull);
-
-
-
-        for (int i = 0; i < hullWS.Count; i++)
-        {
-            hullWS[i] = m_center + (hullWS[i].x * axes.tangent) + (hullWS[i].y * axes.bitangent);
-        }
-
-        for (int i = 0; i < hullWS.Count; i++)
-        {
-            Debug.DrawLine(hullWS[i], hullWS[(i + 1) % hullWS.Count], Color.blue);
-        }
-
-        Debug.DrawLine(hullWS[^1], hullWS[0], Color.blue);
 
         return ShoelaceArea(convexHull);
     }
@@ -128,7 +112,7 @@ public class PhysicsVolume
         }
         else if (Mathf.Abs(inNormal.y) > Mathf.Abs(inNormal.x) && Mathf.Abs(inNormal.y) > Mathf.Abs(inNormal.z))
         {
-            axes.tangent = Vector3.Cross(inNormal, Vector3.forward);
+            axes.tangent = Vector3.Cross(inNormal, Vector3.forward).normalized;
             axes.bitangent = Vector3.Cross(inNormal, axes.tangent).normalized;
         }
         else
@@ -142,8 +126,7 @@ public class PhysicsVolume
             Vector3 projectedLocal = new Vector3()
             {
                 x = Vector3.Dot(point, axes.tangent),
-                y = Vector3.Dot(point, axes.bitangent),
-                z = 0
+                y = Vector3.Dot(point, axes.bitangent)
             };
 
             if (!result.Contains(projectedLocal))

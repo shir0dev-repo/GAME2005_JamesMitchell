@@ -1,15 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 [RequireComponent(typeof(Gravity))]
 public class Trajectory : PhysicsComponentBase
 {
-    private Vector3 m_startingVelocity = Vector3.zero;
-    private float m_timeSinceLaunch = 0;
-
     [SerializeField] private Gravity m_gravity;
+    bool m_firstFrame = true;
 
+    private Vector3 m_startingVelocity = Vector3.zero;
     public void InitParams(float initialAngleDegrees, float initialSpeed, float lifetime)
     {
         float initialAngleRadians = Mathf.Deg2Rad * initialAngleDegrees;
@@ -22,13 +22,13 @@ public class Trajectory : PhysicsComponentBase
 
     public override Vector3 Modify(Vector3 initial)
     {
-        if (m_timeSinceLaunch == 0)
+        if (m_firstFrame)
+        {
             initial = m_startingVelocity;
-        else
-            initial.x += m_startingVelocity.x * m_timeSinceLaunch * PhysicsManager.Instance.DeltaTime;
-
+            m_firstFrame = false;
+        }
+        
         transform.forward = initial.normalized;
-        m_timeSinceLaunch += PhysicsManager.Instance.DeltaTime;
         return initial;
     }
 }

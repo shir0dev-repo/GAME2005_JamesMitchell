@@ -2,25 +2,28 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SphereShape : PhysicsShape
+public class CubeShape : PhysicsShape
 {
-    [SerializeField] private float m_radius = 0.5f;
-
     private PhysicsVolume m_boundingBox;
-
+    public override PhysicsVolume BoundingBox => m_boundingBox;
     private void Awake()
     {
-        m_boundingBox = new PhysicsVolume(transform.position, transform.localRotation, Vector3.one * m_radius);
+        m_boundingBox = new PhysicsVolume(transform.position, transform.localRotation, transform.localScale);
     }
 
-    public override PhysicsVolume getBoundingBox()
+    private void OnEnable()
     {
-        return m_boundingBox;
+        PhysicsManager.OnPhysicsUpdate += UpdateBounds;
     }
 
-    private void Update()
+    private void UpdateBounds(object physicsManager, float deltaTime)
     {
         m_boundingBox.UpdatePositionAndRotation(transform.position, transform.rotation);
+    }
+
+    private void OnDisable()
+    {
+        PhysicsManager.OnPhysicsUpdate -= UpdateBounds;
     }
 
     private void OnDrawGizmosSelected()
@@ -50,9 +53,9 @@ public class SphereShape : PhysicsShape
                 5, 1, 0
             };
             m.RecalculateNormals();
-            Gizmos.color = Color.green;
+            Gizmos.color = Color.magenta;
 
-            //Gizmos.DrawWireMesh(m);
+            Gizmos.DrawWireMesh(m, 0, m_boundingBox.Center);
             /*
         m_points[0] = m_center + new Vector3(m_halfExtents.x, -m_halfExtents.y, m_halfExtents.z); // rbf
         m_points[1] = m_center + new Vector3(-m_halfExtents.x, -m_halfExtents.y, m_halfExtents.z); // lbf

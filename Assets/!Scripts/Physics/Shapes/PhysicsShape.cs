@@ -4,5 +4,5 @@ using UnityEngine;
 
 public abstract class PhysicsShape : MonoBehaviour
 {
-    public abstract PhysicsVolume getBoundingBox();
+    public abstract PhysicsVolume BoundingBox { get; }
 }
