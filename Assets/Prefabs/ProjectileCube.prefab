@@ -108,11 +108,11 @@ GameObject:
   - component: {fileID: 6087199932541292416}
   - component: {fileID: 2725762235631786612}
   - component: {fileID: -2670893983377144279}
-  - component: {fileID: 422858572094722458}
+  - component: {fileID: 8937867310847068891}
   - component: {fileID: -5581783580525562175}
   - component: {fileID: 7017065505589425531}
   m_Layer: 0
-  m_Name: Projectile
+  m_Name: ProjectileCube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -219,7 +219,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d17d14036fb9a474aba7bbcbceb34bc3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_body: {fileID: 0}
   m_gravity: {fileID: 2725762235631786612}
 --- !u!114 &2725762235631786612
 MonoBehaviour:
@@ -233,7 +232,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 431bd22e5a97c694a95a32ede49ec3e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_body: {fileID: 0}
   m_gravityScale: 1
   m_gravity: {x: 0, y: -9.81, z: 0}
 --- !u!114 &-2670893983377144279
@@ -248,11 +246,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c71c7a7941493d543ab92e8c8d39f345, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_body: {fileID: 0}
-  m_shape: {fileID: 422858572094722458}
+  m_volume: {fileID: 8937867310847068891}
   m_gravity: {fileID: 2725762235631786612}
   m_visualizer: {fileID: 7017065505589425531}
---- !u!114 &422858572094722458
+--- !u!114 &8937867310847068891
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -261,9 +258,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 4649570677929316944}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3027e9582e3ed4f48bc2766e1ec9a65e, type: 3}
+  m_Script: {fileID: 11500000, guid: 44b1333fa870e7a4989f2d7e3829cf44, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_halfExtents: {x: 0.5, y: 0.5, z: 0.5}
 --- !u!114 &-5581783580525562175
 MonoBehaviour:
   m_ObjectHideFlags: 0

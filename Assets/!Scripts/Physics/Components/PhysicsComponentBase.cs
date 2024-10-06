@@ -5,8 +5,8 @@ using UnityEngine;
 [RequireComponent(typeof(PhysicsBody))]
 public abstract class PhysicsComponentBase : MonoBehaviour, IPhysicsComponent
 {
+    protected PhysicsBody m_body;
     public abstract Vector3 Modify(Vector3 initial);
-    [SerializeField] protected PhysicsBody m_body;
 
     protected virtual void Awake()
     {

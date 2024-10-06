@@ -2,26 +2,22 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(Gravity), typeof(PhysicsShape))]
+[RequireComponent(typeof(Gravity), typeof(PhysicsVolume))]
 public class Drag : PhysicsComponentBase
 {
     public const float AIR_DENSITY = 1.225f;
 
-    [SerializeField] private PhysicsShape m_shape;
-    [SerializeField] private Gravity m_gravity;
-    [SerializeField] private DragVisualizer m_visualizer;
+    private PhysicsVolume m_volume;
     protected override void Awake()
     {
         base.Awake();
-        m_shape = GetComponent<PhysicsShape>();
-        m_gravity = GetComponent<Gravity>();
+        m_volume = GetComponent<PhysicsVolume>();
     }
 
     public override Vector3 Modify(Vector3 initial)
     {
-        float projectedArea = m_shape.BoundingBox.CrossSectionalArea(initial.normalized);
+        float projectedArea = m_volume.CrossSectionalArea(initial.normalized);
         Vector3 drag = CalculateDrag(initial, m_body.Drag, projectedArea) * PhysicsManager.Instance.DeltaTime;
-        m_visualizer.UpdateDragVector(drag);
 
         initial += drag;
         return initial;

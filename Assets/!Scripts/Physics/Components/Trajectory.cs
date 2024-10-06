@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-[RequireComponent(typeof(Gravity))]
 public class Trajectory : PhysicsComponentBase
 {
-    [SerializeField] private Gravity m_gravity;
     bool m_firstFrame = true;
 
     private Vector3 m_startingVelocity = Vector3.zero;
