@@ -374,7 +374,7 @@ Transform:
   m_GameObject: {fileID: 387984691}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: -10}
+  m_LocalPosition: {x: 0, y: 0, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -544,7 +544,7 @@ MonoBehaviour:
   m_initialSpeed: 30
   m_startingHeight: 0
   m_projectileLifetime: 15
-  m_projectilePF: {fileID: 3658613139881869441, guid: ba97bedb9463a5246b2348afb3cd70fd, type: 3}
+  m_projectilePF: {fileID: 6087199932541292416, guid: 1482ef3c7259a564497c1aa7d3301fe6, type: 3}
   m_turretHead: {fileID: 859310736}
 --- !u!4 &942258815
 Transform:
@@ -650,7 +650,7 @@ Transform:
   m_GameObject: {fileID: 1332427935}
   serializedVersion: 2
   m_LocalRotation: {x: 0.40821788, y: -0.23456968, z: 0.10938163, w: 0.8754261}
-  m_LocalPosition: {x: 0, y: 3, z: 0}
+  m_LocalPosition: {x: 0, y: 500, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

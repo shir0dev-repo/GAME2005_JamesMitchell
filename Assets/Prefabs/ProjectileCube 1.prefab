@@ -111,7 +111,7 @@ GameObject:
   - component: {fileID: 8937867310847068891}
   - component: {fileID: -5581783580525562175}
   m_Layer: 0
-  m_Name: ProjectileCube
+  m_Name: ProjectileCube 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -198,7 +198,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_mass: 1
-  m_dragCoefficient: 0.05
+  m_dragCoefficient: 0.25
   m_velocity: {x: 0, y: 0, z: 0}
   physicsComponents:
   - {fileID: 6087199932541292416}

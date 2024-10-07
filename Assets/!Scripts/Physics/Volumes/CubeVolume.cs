@@ -80,11 +80,6 @@ public class CubeVolume : PhysicsVolume
         return ShoelaceArea(m_projectedPoints);
     }
 
-    private static int[] s_gizmoMeshIndices =
-    {
-
-    };
-
     private void OnDrawGizmos()
     {
         if (!Application.isPlaying) return;
@@ -110,7 +105,7 @@ public class CubeVolume : PhysicsVolume
                 Vector3[] projWS = new Vector3[m_projectedPoints.Length];
                 for (int i = 0; i < projWS.Length; i++)
                 {
-                    projWS[i] = p.ToWorldSpace(Center, m_projectedPoints[i]);
+                    projWS[i] = p.ToWorldSpace(Center, m_projectedPoints[i]); 
                 }
 
                 Gizmos.DrawLineStrip(new(projWS), true);

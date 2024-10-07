@@ -7,7 +7,7 @@ public class PhysicsBody : MonoBehaviour
     [SerializeField] protected float m_mass = 1f;
     public float Mass => m_mass;
 
-    [SerializeField] protected float m_dragCoefficient = 1f;
+    [SerializeField, Range(0, 1.5f)] protected float m_dragCoefficient = 1f;
     public float Drag => m_dragCoefficient;
 
     [SerializeField, ReadOnly] protected Vector3 m_velocity = Vector3.zero;

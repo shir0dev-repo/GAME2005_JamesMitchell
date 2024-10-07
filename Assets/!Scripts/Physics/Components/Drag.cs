@@ -2,12 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(Gravity), typeof(PhysicsVolume))]
+[RequireComponent(typeof(PhysicsVolume))]
 public class Drag : PhysicsComponentBase
 {
     public const float AIR_DENSITY = 1.225f;
-
     private PhysicsVolume m_volume;
+
     protected override void Awake()
     {
         base.Awake();
@@ -19,7 +19,7 @@ public class Drag : PhysicsComponentBase
         float projectedArea = m_volume.CrossSectionalArea(initial.normalized);
         Vector3 drag = CalculateDrag(initial, m_body.Drag, projectedArea) * PhysicsManager.Instance.DeltaTime;
 
-        initial += drag;
+        initial -= drag;
         return initial;
     }
 
@@ -30,12 +30,11 @@ public class Drag : PhysicsComponentBase
         Vector3 verticalVelocity = velocity - horizontalVelocity;
 
         //https://www.grc.nasa.gov/www/k-12/VirtualAero/BottleRocket/airplane/drageq.html thx nasa
-        Vector3 dragXZ = -HorizontalDrag(horizontalVelocity, area, dragCoefficient);
+        Vector3 dragXZ = HorizontalDrag(horizontalVelocity, area, dragCoefficient);
 
-        Vector3 dragY = VerticalDrag(verticalVelocity, m_body.Mass, area, dragCoefficient);
+        Vector3 dragY = -VerticalDrag(verticalVelocity, m_body.Mass, area, dragCoefficient);
         return dragY + dragXZ;
     }
-
 
     private Vector3 HorizontalDrag(Vector3 horizontalVelocity, float area, float dragCoefficient)
     {

@@ -111,7 +111,7 @@ GameObject:
   - component: {fileID: 8937867310847068891}
   - component: {fileID: -5581783580525562175}
   m_Layer: 0
-  m_Name: ProjectileCube
+  m_Name: ProjectileCube 2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -230,7 +230,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 431bd22e5a97c694a95a32ede49ec3e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_gravityScale: 1
+  m_gravityScale: 0.5
   m_gravity: {x: 0, y: -9.81, z: 0}
 --- !u!114 &-2670893983377144279
 MonoBehaviour:

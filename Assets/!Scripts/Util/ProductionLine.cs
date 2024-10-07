@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using System.Collections.Generic;
 
-[System.Serializable]
+[Serializable]
 public class ProductionLine<TValue>
 {
     private List<Func<TValue, TValue>> m_operations = new List<Func<TValue, TValue>>();

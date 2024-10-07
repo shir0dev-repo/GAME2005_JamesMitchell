@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 3658613139881869441}
   - component: {fileID: 3562285528382528301}
   - component: {fileID: 3932307902528499914}
+  - component: {fileID: 3585096799599948073}
   m_Layer: 0
   m_Name: ProjectileSphere
   m_TagString: Untagged
@@ -101,7 +102,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_mass: 1
-  m_dragCoefficient: 1
+  m_dragCoefficient: 0.23
   m_velocity: {x: 0, y: 0, z: 0}
   physicsComponents:
   - {fileID: 3658613139881869441}
@@ -158,5 +159,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c71c7a7941493d543ab92e8c8d39f345, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &3585096799599948073
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8624462478319051652}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4961cfe0eadc2c0499c91ae42dd35203, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
