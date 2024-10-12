@@ -4,5 +4,5 @@ using UnityEngine;
 
 public interface IPartitionable
 {
-    bool IsPartitioned();
+    Vector3 CurrentPartitionOrigin { get; set; }
 }
