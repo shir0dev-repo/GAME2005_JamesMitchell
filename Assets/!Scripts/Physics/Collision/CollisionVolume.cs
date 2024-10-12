@@ -7,3 +7,4 @@ public abstract class CollisionVolume : MonoBehaviour
     public abstract bool IsColliding(CollisionVolume other);
 
 }
+
