@@ -11,3 +11,8 @@ public enum CollisionType
     Plane = 4,
     Halfspace = 8
 }
+
+public static class CollisionCalculator
+{
+
+}
