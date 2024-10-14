@@ -14,6 +14,7 @@ public class PhysicsManager : Singleton<PhysicsManager>
 
     private readonly static List<PhysicsBody> m_actors = new List<PhysicsBody>();
     public static event EventHandler<float> OnPhysicsUpdate;
+    public static event EventHandler<PhysicsBody> OnObjectAdded;
 
     private void Update()
     {
@@ -30,7 +31,10 @@ public class PhysicsManager : Singleton<PhysicsManager>
     public static void AddToLoop(PhysicsBody pb) 
     {
         if (!m_actors.Contains(pb))
+        {
             m_actors.Add(pb); 
+            OnObjectAdded?.Invoke(Instance, pb);
+        }
     }
     public static void RemoveFromLoop(PhysicsBody pb) {  m_actors.Remove(pb); }
 }
