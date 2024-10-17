@@ -2,31 +2,26 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SphereCollisionVolume : PhysicsComponentBase, ICollisionVolume
+public class HalfspaceCollisionVolume : PhysicsComponentBase, ICollisionVolume
 {
-    [SerializeField] private float m_radius = 0.5f;
-
-    public VolumeType Type => VolumeType.Sphere;
+    public VolumeType Type => VolumeType.Halfspace;
 
     public Vector3 CurrentPartitionOrigin { get; set; }
     public Transform Transform => transform;
 
-    bool ICollisionVolume.CollideWithSphere(SphereCollisionVolume other)
+    bool ICollisionVolume.CollideWithHalfspace(HalfspaceCollisionVolume other)
     {
-        if (other is not SphereCollisionVolume otherAsSphere) return false;
-
-        float distance = (otherAsSphere.transform.position - transform.position).magnitude;
-        return distance < m_radius + otherAsSphere.m_radius;
+        throw new System.NotImplementedException();
     }
 
     bool ICollisionVolume.CollideWithPlane(PlaneCollisionVolume other)
     {
-        throw new UnimplementedCollisionException();
+        throw new System.NotImplementedException();
     }
 
-    bool ICollisionVolume.CollideWithHalfspace(HalfspaceCollisionVolume other)
+    bool ICollisionVolume.CollideWithSphere(SphereCollisionVolume other)
     {
-        throw new UnimplementedCollisionException();
+        throw new System.NotImplementedException();
     }
 
     public override Vector3 Modify(Vector3 initial)

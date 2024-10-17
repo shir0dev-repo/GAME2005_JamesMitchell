@@ -5,4 +5,5 @@ using UnityEngine;
 public interface IPartitionable
 {
     Vector3 CurrentPartitionOrigin { get; set; }
+    Transform Transform { get; }
 }

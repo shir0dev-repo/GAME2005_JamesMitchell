@@ -2,12 +2,12 @@ using UnityEngine;
 
 public class CollisionManager : Singleton<CollisionManager>
 {
-    private PartitionedSpace<CollisionVolume> m_space;
+    private PartitionedSpace<ICollisionVolume> m_space;
     [SerializeField] private Vector3Int m_chunkSize = Vector3Int.one * 16;
     protected override void Awake()
     {
         base.Awake();
-        m_space = new PartitionedSpace<CollisionVolume>(m_chunkSize);
+        m_space = new PartitionedSpace<ICollisionVolume>(m_chunkSize);
         m_space.SetPerChunkCalculation(CalculateCollisionsPerChunk);
     }
 
@@ -19,7 +19,7 @@ public class CollisionManager : Singleton<CollisionManager>
 
     private void TryIncludeInCollisions(object physicsManager, PhysicsBody body)
     {
-        if (body.TryGetComponent(out CollisionVolume cv))
+        if (body.TryGetComponent(out ICollisionVolume cv))
         {
             m_space.AssignPartition(cv);
         }
@@ -36,7 +36,7 @@ public class CollisionManager : Singleton<CollisionManager>
         m_space.UpdatePartitions();
     }
 
-    private void CalculateCollisionsPerChunk(Partition<CollisionVolume> chunk)
+    private void CalculateCollisionsPerChunk(Partition<ICollisionVolume> chunk)
     {
         for (int i = 0; i < chunk.Objects.Count; i++)
         {

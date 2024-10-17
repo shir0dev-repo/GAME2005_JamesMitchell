@@ -1,16 +1,25 @@
 using UnityEngine;
 
-public struct PlaneAxis
+public class PlaneAxis
 {
     public Vector3 Normal;
     public Vector3 Tangent;
     public Vector3 Bitangent;
+    public float DistanceFromOrigin;
 
     public PlaneAxis(Vector3 normal)
     {
         Normal = normal.normalized;
         Tangent = CalculateTangent(Normal);
         Bitangent = CalculateBitangent(Normal, Tangent);
+        DistanceFromOrigin = 0;
+    }
+    public PlaneAxis(Vector3 normal, float distanceFromOrigin)
+    {
+        Normal = normal.normalized;
+        Tangent = CalculateTangent(Normal);
+        Bitangent = CalculateBitangent(Normal, Tangent);
+        DistanceFromOrigin = distanceFromOrigin;
     }
 
     private static Vector3 CalculateTangent(Vector3 normal)
@@ -31,7 +40,7 @@ public struct PlaneAxis
         return Vector3.Cross(normal, tangent).normalized;
     }
 
-    public readonly Vector3 Project(Vector3 point)
+    public Vector3 Project(Vector3 point)
     {
         return new Vector3()
         {
@@ -39,7 +48,7 @@ public struct PlaneAxis
             y = Vector3.Dot(point, Bitangent)
         };
     }
-    public readonly Vector3 ToWorldSpace(Vector3 worldPosition, Vector3 projectedPoint)
+    public Vector3 ToWorldSpace(Vector3 worldPosition, Vector3 projectedPoint)
     {
         return worldPosition +
             (projectedPoint.x * Tangent) +

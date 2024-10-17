@@ -3,7 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Partition<T> where T : MonoBehaviour, IPartitionable
+public class Partition<T> where T : IPartitionable
 {
     private List<T> m_objects = new List<T>();
     public List<T> Objects => m_objects;
@@ -35,7 +35,7 @@ public class Partition<T> where T : MonoBehaviour, IPartitionable
         for (int i = 0; i < m_objects.Count; i++)
         {
             T obj = m_objects[i];
-            if (!IsInsideChunk(obj.transform.position, out Vector3Int pos))
+            if (!IsInsideChunk(obj.Transform.position, out Vector3Int pos))
             {
                 addToBag((obj, pos));
                 Remove(obj);

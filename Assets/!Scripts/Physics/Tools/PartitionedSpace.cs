@@ -6,7 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 
-public class PartitionedSpace<T> where T : MonoBehaviour, IPartitionable
+public class PartitionedSpace<T> where T : IPartitionable
 {
     private Dictionary<Vector3Int, Partition<T>> m_loadedPartitions;
     public Dictionary<Vector3Int, Partition<T>> Partitions => m_loadedPartitions;
@@ -62,7 +62,7 @@ public class PartitionedSpace<T> where T : MonoBehaviour, IPartitionable
 
     public void AssignPartition(T obj)
     {
-        Vector3Int key = GetKey(obj.transform.position);
+        Vector3Int key = GetKey(obj.Transform.position);
         if (!m_loadedPartitions.ContainsKey(key))
         {
             m_loadedPartitions.Add(key, new Partition<T>(key, m_chunkSize));
