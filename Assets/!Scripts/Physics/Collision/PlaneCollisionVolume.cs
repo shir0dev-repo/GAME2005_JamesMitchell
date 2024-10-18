@@ -5,26 +5,43 @@ using UnityEngine;
 
 public class PlaneCollisionVolume : PhysicsComponentBase, ICollisionVolume
 {
-    private PlaneAxis m_planeAxes = new(Vector3.up);
+
+    [SerializeField] private PlaneAxis m_axes = new(Vector3.up);
 
     public VolumeType Type => VolumeType.Plane;
+    public bool CurrentlyColliding { get; set; }
 
     public Vector3 CurrentPartitionOrigin { get; set; }
     public Transform Transform => transform;
 
-    bool ICollisionVolume.CollideWithHalfspace(HalfspaceCollisionVolume other)
+    private Vector3 m_positionLastFrame;
+    private Quaternion m_rotationLastFrame;
+
+    protected override void Awake()
     {
-        throw new System.NotImplementedException();
+        base.Awake();
+        m_positionLastFrame = transform.position;
+        m_rotationLastFrame = transform.rotation;
     }
 
-    bool ICollisionVolume.CollideWithPlane(PlaneCollisionVolume other)
+    private void FixedUpdate()
     {
-        throw new System.NotImplementedException();
+        if (transform.position != m_positionLastFrame || transform.rotation != m_rotationLastFrame)
+        {
+            m_axes.Recalculate(transform);
+            m_positionLastFrame = transform.position;
+            m_rotationLastFrame = transform.rotation;
+        }
     }
 
-    bool ICollisionVolume.CollideWithSphere(SphereCollisionVolume other)
+    public float GetDistance(Vector3 position)
     {
-        throw new System.NotImplementedException();
+
+        return
+            Mathf.Abs(m_axes.Normal.x * position.x +
+            m_axes.Normal.y * position.y +
+            m_axes.Normal.z * position.z -
+            m_axes.DistanceFromOrigin);
     }
 
     public override Vector3 Modify(Vector3 initial)

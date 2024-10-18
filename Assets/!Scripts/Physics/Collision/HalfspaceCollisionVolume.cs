@@ -4,24 +4,58 @@ using UnityEngine;
 
 public class HalfspaceCollisionVolume : PhysicsComponentBase, ICollisionVolume
 {
+    [SerializeField] private PlaneAxis m_axes = new PlaneAxis(Vector3.up);
     public VolumeType Type => VolumeType.Halfspace;
+    public bool CurrentlyColliding { get; set; }
 
     public Vector3 CurrentPartitionOrigin { get; set; }
     public Transform Transform => transform;
 
-    bool ICollisionVolume.CollideWithHalfspace(HalfspaceCollisionVolume other)
+
+    private Vector3 m_positionLastFrame;
+    private Quaternion m_rotationLastFrame;
+
+    protected override void Awake()
     {
-        throw new System.NotImplementedException();
+        base.Awake();
+        m_positionLastFrame = transform.position;
+        m_rotationLastFrame = transform.rotation;
     }
 
-    bool ICollisionVolume.CollideWithPlane(PlaneCollisionVolume other)
+    private void FixedUpdate()
     {
-        throw new System.NotImplementedException();
+        if (transform.position != m_positionLastFrame || transform.rotation != m_rotationLastFrame)
+        {
+            m_axes.Recalculate(transform);
+            m_positionLastFrame = transform.position;
+            m_rotationLastFrame = transform.rotation;
+        }
     }
 
-    bool ICollisionVolume.CollideWithSphere(SphereCollisionVolume other)
+    public float GetDistance(Vector3 position)
     {
-        throw new System.NotImplementedException();
+        Vector3 dir = position - transform.position;
+        return
+            Mathf.Abs(m_axes.Normal.x * dir.x +
+                m_axes.Normal.y * dir.y +
+                m_axes.Normal.z * dir.z);
+    }
+
+    public bool IsInsideHalfspace(Vector3 position)
+    {
+        // get direction from plane origin to position
+        Vector3 direction = position - transform.position;
+
+        Debug.DrawLine(transform.position, transform.position + m_axes.Normal, Color.red);
+        Debug.DrawLine(transform.position, transform.position + direction, Color.green);
+
+        // range (0 < p <= 1) when angle is < 90°
+        // range (0 == p == 0) when angle is == 90°
+        // range (-1 <= p < 0) when angle is > 90°
+        float nDotP = Vector3.Dot(m_axes.Normal, direction);
+        
+        // closed halfspace, care about points on hyperplane as well
+        return nDotP <= 0;
     }
 
     public override Vector3 Modify(Vector3 initial)

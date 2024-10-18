@@ -1,5 +1,6 @@
 using UnityEngine;
 
+[System.Serializable]
 public class PlaneAxis
 {
     public Vector3 Normal;
@@ -20,6 +21,14 @@ public class PlaneAxis
         Tangent = CalculateTangent(Normal);
         Bitangent = CalculateBitangent(Normal, Tangent);
         DistanceFromOrigin = distanceFromOrigin;
+    }
+
+    public void Recalculate(Transform t)
+    {
+        Normal = t.up;
+        Tangent = CalculateTangent(Normal);
+        Bitangent = CalculateBitangent(Normal, Tangent);
+        DistanceFromOrigin = Vector3.Distance(Vector3.zero, t.position);
     }
 
     private static Vector3 CalculateTangent(Vector3 normal)

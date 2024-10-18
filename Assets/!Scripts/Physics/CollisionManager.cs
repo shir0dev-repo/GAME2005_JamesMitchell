@@ -1,9 +1,13 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class CollisionManager : Singleton<CollisionManager>
 {
     private PartitionedSpace<ICollisionVolume> m_space;
     [SerializeField] private Vector3Int m_chunkSize = Vector3Int.one * 16;
+
+    private List<ICollisionVolume> m_planesAndHalfspaces = new();
+
     protected override void Awake()
     {
         base.Awake();
@@ -13,7 +17,7 @@ public class CollisionManager : Singleton<CollisionManager>
 
     private void OnEnable()
     {
-        PhysicsManager.OnPhysicsUpdate += UpdateChunks;
+        PhysicsManager.OnPhysicsUpdate += CheckCollisions;
         PhysicsManager.OnObjectAdded += TryIncludeInCollisions;
     }
 
@@ -21,31 +25,48 @@ public class CollisionManager : Singleton<CollisionManager>
     {
         if (body.TryGetComponent(out ICollisionVolume cv))
         {
-            m_space.AssignPartition(cv);
+            if (cv is SphereCollisionVolume)
+                m_space.AssignPartition(cv);
+            else
+            {
+                m_planesAndHalfspaces.Add(cv);
+                Debug.Log("added one");
+            }
         }
     }
 
     private void OnDisable()
     {
-        PhysicsManager.OnPhysicsUpdate -= UpdateChunks;
+        PhysicsManager.OnPhysicsUpdate -= CheckCollisions;
         PhysicsManager.OnObjectAdded -= TryIncludeInCollisions;
     }
 
-    private void UpdateChunks(object physicsManager, float dt)
+    private void CheckCollisions(object physicsManager, float dt)
     {
         m_space.UpdatePartitions();
     }
 
     private void CalculateCollisionsPerChunk(Partition<ICollisionVolume> chunk)
     {
+        ICollisionVolume current;
+        ICollisionVolume compare;
+
         for (int i = 0; i < chunk.Objects.Count; i++)
         {
+            current = chunk.Objects[i];
+            
+            foreach (var planarVolume in m_planesAndHalfspaces)
+            {
+                compare = planarVolume;
+                current.CurrentlyColliding = compare.IsColliding(current);
+            }
             for (int j = 0; j < chunk.Objects.Count; j++)
             {
                 if (i == j) continue;
+                
+                compare = chunk.Objects[j];
 
-                if (chunk.Objects[i].IsColliding(chunk.Objects[j]))
-                    Debug.Log("collision occured");
+                current.CurrentlyColliding = compare.CurrentlyColliding = current.IsColliding(compare);                
             }
         }
     }
