@@ -38,7 +38,8 @@ public class PlaneCollisionVolume : PhysicsComponentBase, ICollisionVolume
     {
 
         return
-            Mathf.Abs(m_axes.Normal.x * position.x +
+            Mathf.Abs(
+            m_axes.Normal.x * position.x +
             m_axes.Normal.y * position.y +
             m_axes.Normal.z * position.z -
             m_axes.DistanceFromOrigin);

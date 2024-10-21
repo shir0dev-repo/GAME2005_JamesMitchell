@@ -8,11 +8,6 @@ public class SineMovement : MonoBehaviour
     [SerializeField, ReadOnly] private float m_timeElapsed = 0;
     [SerializeField] private float m_frequency = 2, m_amplitude = 1f;
 
-    private void Start()
-    {
-        m_amplitude = Random.Range(m_amplitude - 16f, 64f);
-    }
-
     private void FixedUpdate()
     {
         Move();

@@ -104,34 +104,18 @@ public static class Collisions
     {
         return SpherePlaneCollision(a as SphereCollisionVolume, b as PlaneCollisionVolume);
     }
-    private static bool SpherePlaneCollision(SphereCollisionVolume a, PlaneCollisionVolume b)
+    private static bool SpherePlaneCollision(SphereCollisionVolume sphere, PlaneCollisionVolume plane)
     {
-        return Mathf.Abs(b.GetDistance(a.transform.position)) <= a.Radius;
+        return plane.GetDistance(sphere.transform.position) <= sphere.Radius;
     }
 
     private static bool SHCollision(ICollisionVolume a, ICollisionVolume b)
     {
         return SphereHalfspaceCollision(a as SphereCollisionVolume, b as HalfspaceCollisionVolume);
     }
-    private static bool SphereHalfspaceCollision(SphereCollisionVolume a, HalfspaceCollisionVolume b)
+    private static bool SphereHalfspaceCollision(SphereCollisionVolume sphere, HalfspaceCollisionVolume halfspace)
     {
-        // position is along hyperplane or inside half space
-        if (b.IsInsideHalfspace(a.transform.position))
-        {
-            Debug.Log("position inside halfspace");
-            return true;
-        }
-
-        // position is outside, check if radius overlaps half space
-        else
-        {
-            bool overlap = b.GetDistance(a.transform.position) <= a.Radius;
-            if (overlap)
-            {
-                Debug.Log("overlapping");
-            }
-            return overlap;
-        }
+        return halfspace.GetDistance(sphere.transform.position) - sphere.Radius <= 0;
     }
 
     private static bool SBCollision(ICollisionVolume a, ICollisionVolume b)

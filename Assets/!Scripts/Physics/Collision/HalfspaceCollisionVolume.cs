@@ -34,11 +34,11 @@ public class HalfspaceCollisionVolume : PhysicsComponentBase, ICollisionVolume
 
     public float GetDistance(Vector3 position)
     {
-        Vector3 dir = position - transform.position;
+        Vector3 p = position - transform.position;
         return
-            Mathf.Abs(m_axes.Normal.x * dir.x +
-                m_axes.Normal.y * dir.y +
-                m_axes.Normal.z * dir.z);
+            m_axes.Normal.x * p.x +
+                m_axes.Normal.y * p.y +
+                m_axes.Normal.z * p.z;
     }
 
     public bool IsInsideHalfspace(Vector3 position)
