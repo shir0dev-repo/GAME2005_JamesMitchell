@@ -4,11 +4,18 @@ using UnityEngine;
 
 public interface ICollisionVolume : IPartitionable
 {
-    VolumeType Type { get; }
+    ColliderType Type { get; }
     bool CurrentlyColliding { get; set; }
+    Stack<ICollisionVolume> CurrentCollisions { get; }
+
     bool IsColliding(ICollisionVolume other)
     {
-        return Collisions.IsColliding(this, other);
+        return Collisions.IsColliding(this, other);    
+    }
+
+    Vector3 GetResponseVector(ICollisionVolume other)
+    {
+        return Collisions.GetResponse(this, other);
     }
 }
 

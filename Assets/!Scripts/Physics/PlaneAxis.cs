@@ -49,9 +49,9 @@ public class PlaneAxis
         return Vector3.Cross(normal, tangent).normalized;
     }
 
-    public Vector3 Project(Vector3 point)
+    public Vector2 Project(Vector3 point)
     {
-        return new Vector3()
+        return new Vector2()
         {
             x = Vector3.Dot(point, Tangent),
             y = Vector3.Dot(point, Bitangent)

@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public enum VolumeType
+public enum ColliderType
 {
     Sphere,
     Plane,
@@ -16,8 +16,8 @@ public static class Collisions
 
     static Collisions()
     {
-        Interactions = new Func<ICollisionVolume, ICollisionVolume, bool>[(int)VolumeType.LENGTH][];
-        int length = (int)VolumeType.LENGTH;
+        Interactions = new Func<ICollisionVolume, ICollisionVolume, bool>[(int)ColliderType.LENGTH][];
+        int length = (int)ColliderType.LENGTH;
         // initialize array sizes. 
         for (int i = 0; i < length; i++)
         {
@@ -32,15 +32,15 @@ public static class Collisions
         {
             for (int k = 0; k < Interactions[i].Length; k++)
             {
-                Interactions[i][k] = GetInteraction((VolumeType)i, (VolumeType)(i + k));
+                Interactions[i][k] = GetInteraction((ColliderType)i, (ColliderType)(i + k));
             }
         }
     }
 
     public static bool IsColliding(ICollisionVolume a, ICollisionVolume b)
     {
-        int typeA = (int)a.Type; // 3
-        int typeB = (int)b.Type; // 0
+        int typeA = (int)a.Type;
+        int typeB = (int)b.Type;
 
         // because interactions are implemented in a triangular manner,
         // passing in the larger value first results in an IndexOutOfRangeException.
@@ -58,31 +58,31 @@ public static class Collisions
     // methods are separated into a declaration/implementation style
     // to make casting easier. Child-specific parameters such as a sphere's radius or a plane's normal
     // cannot be obtained without downcasting, which cannot be implicit.
-    private static Func<ICollisionVolume, ICollisionVolume, bool> GetInteraction(VolumeType first, VolumeType second)
+    private static Func<ICollisionVolume, ICollisionVolume, bool> GetInteraction(ColliderType first, ColliderType second)
     {
         switch (first, second)
         {
-            case (VolumeType.Sphere, VolumeType.Sphere):
+            case (ColliderType.Sphere, ColliderType.Sphere):
                 return SSCollision;
-            case (VolumeType.Sphere, VolumeType.Plane):
+            case (ColliderType.Sphere, ColliderType.Plane):
                 return SPCollision;
-            case (VolumeType.Sphere, VolumeType.Halfspace):
+            case (ColliderType.Sphere, ColliderType.Halfspace):
                 return SHCollision;
-            case (VolumeType.Sphere, VolumeType.AABB):
+            case (ColliderType.Sphere, ColliderType.AABB):
                 return SBCollision;
 
-            case (VolumeType.Plane, VolumeType.Plane):
+            case (ColliderType.Plane, ColliderType.Plane):
                 return PPCollision;
-            case (VolumeType.Plane, VolumeType.Halfspace):
+            case (ColliderType.Plane, ColliderType.Halfspace):
                 return PHCollision;
-            case (VolumeType.Plane, VolumeType.AABB):
+            case (ColliderType.Plane, ColliderType.AABB):
                 return PBCollision;
 
-            case (VolumeType.Halfspace, VolumeType.Halfspace):
+            case (ColliderType.Halfspace, ColliderType.Halfspace):
                 return HHCollision;
-            case (VolumeType.Halfspace, VolumeType.AABB):
+            case (ColliderType.Halfspace, ColliderType.AABB):
                 return HBCollision;
-            case (VolumeType.AABB, VolumeType.AABB):
+            case (ColliderType.AABB, ColliderType.AABB):
                 return BBCollision;
 
             default:
@@ -90,6 +90,7 @@ public static class Collisions
         }
     }
 
+    #region CheckImplementation
     private static bool SSCollision(ICollisionVolume a, ICollisionVolume b)
     {
         return SphereSphereCollision(a as SphereCollisionVolume, b as SphereCollisionVolume);
@@ -179,5 +180,11 @@ public static class Collisions
     private static bool AABBAABBCollision(AABBCollisionVolume a, AABBCollisionVolume b)
     {
         return false;
+    }
+    #endregion
+
+    public static Vector3 GetResponse(ICollisionVolume a, ICollisionVolume b)
+    {
+        return Vector3.zero;
     }
 }

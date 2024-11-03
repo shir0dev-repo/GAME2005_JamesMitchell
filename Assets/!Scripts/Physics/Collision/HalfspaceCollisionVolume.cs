@@ -5,8 +5,10 @@ using UnityEngine;
 public class HalfspaceCollisionVolume : PhysicsComponentBase, ICollisionVolume
 {
     [SerializeField] private PlaneAxis m_axes = new PlaneAxis(Vector3.up);
-    public VolumeType Type => VolumeType.Halfspace;
+    public ColliderType Type => ColliderType.Halfspace;
     public bool CurrentlyColliding { get; set; }
+    private readonly Stack<ICollisionVolume> m_currentCollisions = new();
+    public Stack<ICollisionVolume> CurrentCollisions { get => m_currentCollisions; }
 
     public Vector3 CurrentPartitionOrigin { get; set; }
     public Transform Transform => transform;

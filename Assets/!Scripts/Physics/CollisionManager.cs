@@ -1,12 +1,25 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class CollisionManager : Singleton<CollisionManager>
 {
+    public class OnCollisionArgs : EventArgs
+    {
+        public ICollisionVolume A, B;
+
+        public OnCollisionArgs(ICollisionVolume a, ICollisionVolume b) : base()
+        {
+            A = a;
+            B = b;
+        }
+    }
+
     private PartitionedSpace<ICollisionVolume> m_space;
     [SerializeField] private Vector3Int m_chunkSize = Vector3Int.one * 16;
 
     private List<ICollisionVolume> m_planesAndHalfspaces = new();
+    public static event EventHandler<OnCollisionArgs> OnCollision;
 
     protected override void Awake()
     {
@@ -66,7 +79,13 @@ public class CollisionManager : Singleton<CollisionManager>
                 
                 compare = chunk.Objects[j];
 
-                current.CurrentlyColliding = compare.CurrentlyColliding = current.IsColliding(compare);                
+                current.CurrentlyColliding = compare.CurrentlyColliding = current.IsColliding(compare);
+                
+                if (!compare.CurrentCollisions.Contains(current))
+                    compare.CurrentCollisions.Push(current);
+
+                if (!current.CurrentCollisions.Contains(compare))
+                    current.CurrentCollisions.Push(compare);
             }
         }
     }

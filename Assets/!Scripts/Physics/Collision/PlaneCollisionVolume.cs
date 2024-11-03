@@ -8,8 +8,10 @@ public class PlaneCollisionVolume : PhysicsComponentBase, ICollisionVolume
 
     [SerializeField] private PlaneAxis m_axes = new(Vector3.up);
 
-    public VolumeType Type => VolumeType.Plane;
+    public ColliderType Type => ColliderType.Plane;
     public bool CurrentlyColliding { get; set; }
+    private readonly Stack<ICollisionVolume> m_currentCollisions = new();
+    public Stack<ICollisionVolume> CurrentCollisions { get => m_currentCollisions; }
 
     public Vector3 CurrentPartitionOrigin { get; set; }
     public Transform Transform => transform;

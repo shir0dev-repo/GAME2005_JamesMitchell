@@ -5,37 +5,22 @@ using UnityEngine;
 public class SphereCollisionVolume : PhysicsComponentBase, ICollisionVolume
 {
     [SerializeField] private float m_radius = 0.5f;
-    public float Radius => m_radius;
+    public float Radius { get => m_radius; } 
 
-    public VolumeType Type => VolumeType.Sphere;
-    private bool m_currentlyColliding = false;
+    public ColliderType Type { get => ColliderType.Sphere; }
+
     public bool CurrentlyColliding { get; set; }
+    private readonly Stack<ICollisionVolume> m_currentCollisions = new();
+    public Stack<ICollisionVolume> CurrentCollisions { get => m_currentCollisions; }
 
     public Vector3 CurrentPartitionOrigin { get; set; }
-    public Transform Transform => transform;
-
-    private MeshRenderer m_renderer;
+    public Transform Transform { get => transform; }
 
     public bool IsColliding { get; private set; }
 
     protected override void Awake()
     {
         base.Awake();
-        m_renderer = GetComponent<MeshRenderer>();
-    }
-
-    private void FixedUpdate()
-    {
-        Debug.Log(CurrentlyColliding);
-        if (CurrentlyColliding)
-        {
-            m_renderer.material.color = Color.red;
-        }
-        else
-        {
-            m_renderer.material.color = Color.green;
-        }
-        
     }
 
     public override Vector3 Modify(Vector3 initial)

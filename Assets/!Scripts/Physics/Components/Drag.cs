@@ -2,16 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(PhysicsVolume))]
+[RequireComponent(typeof(IPhysicsVolume))]
 public class Drag : PhysicsComponentBase
 {
     public const float AIR_DENSITY = 1.225f;
-    private PhysicsVolume m_volume;
+    private IPhysicsVolume m_volume;
 
     protected override void Awake()
     {
         base.Awake();
-        m_volume = GetComponent<PhysicsVolume>();
+        m_volume = GetComponent<IPhysicsVolume>();
     }
 
     public override Vector3 Modify(Vector3 initial)
