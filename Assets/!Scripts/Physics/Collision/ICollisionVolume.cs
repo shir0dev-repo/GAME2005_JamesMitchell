@@ -5,6 +5,7 @@ using UnityEngine;
 public interface ICollisionVolume : IPartitionable
 {
     ColliderType Type { get; }
+    VelocityMode VelocityMode { get; }
     ICollisionVolume CurrentCollision { get; set; }
     bool CurrentlyColliding { get; set; }
     bool IsKinematic { get; }

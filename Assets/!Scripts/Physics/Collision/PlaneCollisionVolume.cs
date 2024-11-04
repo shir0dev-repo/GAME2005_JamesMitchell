@@ -6,6 +6,9 @@ using UnityEngine;
 public class PlaneCollisionVolume : PhysicsComponentBase, ICollisionVolume
 {
     public ColliderType Type => ColliderType.Plane;
+    public VelocityMode VelocityMode => m_velocityMode;
+    [SerializeField] private VelocityMode m_velocityMode;
+
     public bool IsKinematic => false;
     public ICollisionVolume CurrentCollision { get; set; }
     public bool CurrentlyColliding { get; set; }

@@ -5,6 +5,8 @@ using UnityEngine;
 public class SphereCollisionVolume : PhysicsComponentBase, IPhysicsVolume, ICollisionVolume
 {
     public ColliderType Type => ColliderType.Sphere;
+    public VelocityMode VelocityMode => m_velocityMode;
+    [SerializeField] private VelocityMode m_velocityMode;
 
     public float Radius => m_radius;
     [SerializeField] private float m_radius = 0.5f;

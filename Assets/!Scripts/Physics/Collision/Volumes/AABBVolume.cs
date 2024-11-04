@@ -7,6 +7,8 @@ using UnityEngine;
 public class AABBVolume : PhysicsComponentBase, ICollisionVolume, IPhysicsVolume
 {
     public ColliderType Type => ColliderType.AABB;
+    public VelocityMode VelocityMode => m_velocityMode;
+    [SerializeField] private VelocityMode m_velocityMode;
 
     public bool IsKinematic { get; private set; }
     public bool CurrentlyColliding { get; set; }

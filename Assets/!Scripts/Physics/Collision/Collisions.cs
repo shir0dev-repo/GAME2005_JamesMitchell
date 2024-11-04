@@ -10,6 +10,8 @@ public enum ColliderType
     LENGTH
 }
 
+public enum VelocityMode { Reflect, ZeroOnImpact }
+
 public static class Collisions
 {
     public static Func<ICollisionVolume, ICollisionVolume, bool>[][] Interactions;
@@ -90,7 +92,7 @@ public static class Collisions
         }
     }
 
-    #region CheckImplementation
+    #region Sphere Checks
     private static bool SSCollision(ICollisionVolume a, ICollisionVolume b)
     {
         return SphereSphereCollision(a as SphereCollisionVolume, b as SphereCollisionVolume);
@@ -127,7 +129,9 @@ public static class Collisions
     {
         return false;
     }
+    #endregion
 
+    #region Plane Checks
     private static bool PPCollision(ICollisionVolume a, ICollisionVolume b)
     {
         return PlanePlaneCollision(a as PlaneCollisionVolume, b as PlaneCollisionVolume);
@@ -154,7 +158,9 @@ public static class Collisions
     {
         return false;
     }
+    #endregion
 
+    #region Half Space Checks
     private static bool HHCollision(ICollisionVolume a, ICollisionVolume b)
     {
         return HalfspaceHalfspaceCollision(a as HalfspaceCollisionVolume, b as HalfspaceCollisionVolume);
@@ -172,7 +178,9 @@ public static class Collisions
     {
         return false;
     }
+    #endregion
 
+    #region AABB Checks
     private static bool BBCollision(ICollisionVolume a, ICollisionVolume b)
     {
         return AABBAABBCollision(a as AABBCollisionVolume, b as AABBCollisionVolume);
@@ -183,38 +191,47 @@ public static class Collisions
     }
     #endregion
 
-    public static Vector3 GetResponse(ref Vector3 velocity, ICollisionVolume a, ICollisionVolume b)
-    {
-        switch (a.Type, b.Type)
-        {
-            case (ColliderType.Sphere, ColliderType.Sphere):
-                return SphereSphereCollisionResponse(ref velocity, a as SphereCollisionVolume, b as SphereCollisionVolume);
-            case (ColliderType.Sphere, ColliderType.Plane):
-                return SpherePlaneCollisionResponse(ref velocity, a as SphereCollisionVolume, b as PlaneCollisionVolume);
-            case (ColliderType.Sphere, ColliderType.Halfspace):
-                return SphereHalfspaceCollisionResponse(ref velocity, a as SphereCollisionVolume, b as HalfspaceCollisionVolume);
-            case (ColliderType.Sphere, ColliderType.AABB):
-                return SphereAABBCollisionResponse(ref velocity, a as SphereCollisionVolume, b as AABBCollisionVolume);
-            default:
-                return Vector3.zero;
-        }
-    }
-
     /// <summary>
-    /// 
+    /// Calculates the required displacement to unintersect <see cref="ICollisionVolume"/>s <paramref name="a"/> and <paramref name="b"/>.<br/>
+    /// If <paramref name="a"/>'s <see cref="VelocityMode"/> is <see cref="VelocityMode.ZeroOnImpact"/>, <paramref name="velocity"/> will 
+    /// be set to <see cref="Vector3.zero"/>.
     /// </summary>
-    /// <param name="velocity"></param>
-    /// <param name="a"></param>
-    /// <param name="b"></param>
+    /// <param name="velocity">The current velocity (if any) of <see cref="ICollisionVolume"/> <paramref name="a"/>.</param>
+    /// <param name="a">The current <see cref="ICollisionVolume"/> to check collisions with.</param>
+    /// <param name="b">The opposing <see cref="ICollisionVolume"/> to check against.</param>
     /// <returns>
     /// The displacement vector that unintersects <see cref="SphereCollisionVolume"/> <paramref name="a"/>.<br/>
     /// If <paramref name="b"/> is also kinematic, displacement vector will have 50% magnitude to account for both volumes being displaced.
     /// </returns>
+    public static Vector3 GetResponse(ref Vector3 velocity, ICollisionVolume a, ICollisionVolume b)
+    {
+        return (a.Type, b.Type) switch
+        {
+            (ColliderType.Sphere, ColliderType.Sphere) =>
+                SphereSphereCollisionResponse(ref velocity, a as SphereCollisionVolume, b as SphereCollisionVolume),
+            (ColliderType.Sphere, ColliderType.Plane) =>
+                SpherePlaneCollisionResponse(ref velocity, a as SphereCollisionVolume, b as PlaneCollisionVolume),
+            (ColliderType.Sphere, ColliderType.Halfspace) =>
+                SphereHalfspaceCollisionResponse(ref velocity, a as SphereCollisionVolume, b as HalfspaceCollisionVolume),
+            (ColliderType.Sphere, ColliderType.AABB) =>
+                SphereAABBCollisionResponse(ref velocity, a as SphereCollisionVolume, b as AABBCollisionVolume),
+            _ => Vector3.zero,
+        };
+    }
+
     private static Vector3 SphereSphereCollisionResponse(ref Vector3 velocity, SphereCollisionVolume a, SphereCollisionVolume b)
     {
         Vector3 collisionPlaneNormal = (a.Center - b.Center).normalized;
-        float mag = velocity.magnitude;
-        velocity = Vector3.Reflect(velocity.normalized, collisionPlaneNormal) * mag;
+
+        if (a.VelocityMode == VelocityMode.ZeroOnImpact)
+        {
+            velocity = Vector3.zero;
+        }
+        else
+        {
+            float mag = velocity.magnitude;
+            velocity = Vector3.Reflect(velocity.normalized, collisionPlaneNormal) * mag;
+        }
 
         Debug.Log("SS collision");
 
@@ -226,8 +243,8 @@ public static class Collisions
         float intersectionDistance = Mathf.Abs(distance - sumRadii);
 
         Vector3 displacement = collisionPlaneNormal * intersectionDistance;
-        
-        if (b.IsKinematic == false)
+
+        if (b.IsKinematic == true)
             displacement *= 0.5f;
 
         return displacement;
@@ -236,34 +253,40 @@ public static class Collisions
     private static Vector3 SpherePlaneCollisionResponse(ref Vector3 velocity, SphereCollisionVolume a, PlaneCollisionVolume b)
     {
         Vector3 normal = b.Axes.Normal;
-        float mag = velocity.magnitude;
-        velocity = Vector3.Reflect(velocity.normalized, normal) * mag;
+        if (a.VelocityMode == VelocityMode.ZeroOnImpact)
+        {
+            velocity = Vector3.zero;
+        }
+        else
+        {
+            float mag = velocity.magnitude;
+            velocity = Vector3.Reflect(velocity.normalized, normal) * mag;
+        }
 
         Debug.Log("SP collision");
 
         float distance = a.Radius - b.GetDistance(a.Center);
-        
+
         return normal * distance;
     }
 
     private static Vector3 SphereHalfspaceCollisionResponse(ref Vector3 velocity, SphereCollisionVolume a, HalfspaceCollisionVolume b)
     {
         Vector3 normal = b.Axes.Normal;
-        float mag = velocity.magnitude;
-        velocity = Vector3.Reflect(velocity.normalized, normal) * mag;
 
-        Debug.Log("SHS collision");
-
-        float displacement = 1;
-
-        if (b.IsInsideHalfspace(a.Center))
+        if (a.VelocityMode == VelocityMode.ZeroOnImpact)
         {
-            displacement = b.GetDistance(a.Center) + a.Radius;
+            velocity = Vector3.zero;
         }
         else
         {
-            displacement = a.Radius - b.GetDistance(a.Center);
+            float mag = velocity.magnitude;
+            velocity = Vector3.Reflect(velocity.normalized, normal) * mag;
         }
+
+        Debug.Log("SHS collision");
+
+        float displacement = a.Radius - b.GetSignedDistance(a.Center);
 
         return normal * displacement;
     }

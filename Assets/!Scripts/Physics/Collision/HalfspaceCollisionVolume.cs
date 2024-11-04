@@ -5,6 +5,9 @@ using UnityEngine;
 public class HalfspaceCollisionVolume : PhysicsComponentBase, ICollisionVolume
 {
     public ColliderType Type => ColliderType.Halfspace;
+    public VelocityMode VelocityMode => m_velocityMode;
+    [SerializeField] private VelocityMode m_velocityMode;
+
     public bool IsKinematic { get; private set; }
     public ICollisionVolume CurrentCollision { get; set; }
     public bool CurrentlyColliding { get; set; }
@@ -78,12 +81,6 @@ public class HalfspaceCollisionVolume : PhysicsComponentBase, ICollisionVolume
 
     public override Vector3 Modify(Vector3 initial)
     {
-        /*
-        The plan is to use the existing system to allow for the collision object to "react" to collisions,
-        and essentially use the last point in the production line to "push out" from the collision object.
-        For now, just return the initial velocity at this point to avoid modifying it.
-        */
-
         return initial;
     }
 }

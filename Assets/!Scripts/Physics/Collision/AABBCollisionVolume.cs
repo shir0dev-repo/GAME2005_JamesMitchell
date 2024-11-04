@@ -5,6 +5,9 @@ using UnityEngine;
 public class AABBCollisionVolume : ICollisionVolume
 {
     public ColliderType Type => ColliderType.AABB;
+    public VelocityMode VelocityMode => m_velocityMode;
+    [SerializeField] private VelocityMode m_velocityMode;
+
     public bool CurrentlyColliding { get; set; }
     private readonly Stack<ICollisionVolume> m_currentCollisions = new();
     public Stack<ICollisionVolume> CurrentCollisions { get => m_currentCollisions; }
