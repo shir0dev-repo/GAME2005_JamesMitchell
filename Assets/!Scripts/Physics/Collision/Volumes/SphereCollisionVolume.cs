@@ -33,14 +33,12 @@ public class SphereCollisionVolume : PhysicsComponentBase, IPhysicsVolume, IColl
     public override Vector3 Modify(Vector3 initial)
     {
         if (IsKinematic == false) return initial;
-        else if (initial.sqrMagnitude <= 0.001f) return initial;
+        else if (initial.sqrMagnitude <= 0.001f) return Vector3.zero;
 
-        Vector3 result = Vector3.zero;
         if (CurrentCollision != null)
         {
-            result = (this as ICollisionVolume).GetCollisionResponse(ref initial, CurrentCollision);
-            transform.position += result;
-            CurrentCollision = null;
+            transform.position += (this as ICollisionVolume).GetCollisionResponse(ref initial, CurrentCollision);
+            CurrentCollision = null;            
         }
         
         return initial;

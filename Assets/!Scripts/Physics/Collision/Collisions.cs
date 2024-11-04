@@ -185,13 +185,18 @@ public static class Collisions
 
     public static Vector3 GetResponse(ref Vector3 velocity, ICollisionVolume a, ICollisionVolume b)
     {
-        return SSResponse(ref velocity, a as SphereCollisionVolume, b as SphereCollisionVolume);
-        Vector3 result;
         switch (a.Type, b.Type)
         {
             case (ColliderType.Sphere, ColliderType.Sphere):
-                
-                
+                return SphereSphereCollisionResponse(ref velocity, a as SphereCollisionVolume, b as SphereCollisionVolume);
+            case (ColliderType.Sphere, ColliderType.Plane):
+                return SpherePlaneCollisionResponse(ref velocity, a as SphereCollisionVolume, b as PlaneCollisionVolume);
+            case (ColliderType.Sphere, ColliderType.Halfspace):
+                return SphereHalfspaceCollisionResponse(ref velocity, a as SphereCollisionVolume, b as HalfspaceCollisionVolume);
+            case (ColliderType.Sphere, ColliderType.AABB):
+                return SphereAABBCollisionResponse(ref velocity, a as SphereCollisionVolume, b as AABBCollisionVolume);
+            default:
+                return Vector3.zero;
         }
     }
 
@@ -205,15 +210,13 @@ public static class Collisions
     /// The displacement vector that unintersects <see cref="SphereCollisionVolume"/> <paramref name="a"/>.<br/>
     /// If <paramref name="b"/> is also kinematic, displacement vector will have 50% magnitude to account for both volumes being displaced.
     /// </returns>
-    private static Vector3 SSResponse(ref Vector3 velocity, SphereCollisionVolume a, SphereCollisionVolume b)
+    private static Vector3 SphereSphereCollisionResponse(ref Vector3 velocity, SphereCollisionVolume a, SphereCollisionVolume b)
     {
-        Vector3 currentDisplacement = a.transform.position + velocity * PhysicsManager.Instance.DeltaTime;
-
         Vector3 collisionPlaneNormal = (a.Center - b.Center).normalized;
         float mag = velocity.magnitude;
         velocity = Vector3.Reflect(velocity.normalized, collisionPlaneNormal) * mag;
 
-        Debug.Log("collision");
+        Debug.Log("SS collision");
 
         if (a.IsKinematic == false)
             return Vector3.zero;
@@ -223,11 +226,33 @@ public static class Collisions
         float intersectionDistance = Mathf.Abs(distance - sumRadii);
 
         Vector3 displacement = collisionPlaneNormal * intersectionDistance;
-        //velocity -= displacement * currentDisplacement.magnitude;
-
+        
         if (b.IsKinematic == false)
             displacement *= 0.5f;
 
         return displacement;
+    }
+
+    private static Vector3 SpherePlaneCollisionResponse(ref Vector3 velocity, SphereCollisionVolume a, PlaneCollisionVolume b)
+    {
+        Vector3 normal = b.Axes.Normal;
+        float mag = velocity.magnitude;
+        velocity = Vector3.Reflect(velocity.normalized, normal) * mag;
+
+        Debug.Log("SP collision");
+
+        float distance = a.Radius - b.GetDistance(a.Center);
+        
+        return normal * distance;
+    }
+
+    private static Vector3 SphereHalfspaceCollisionResponse(ref Vector3 velocity, SphereCollisionVolume a, HalfspaceCollisionVolume b)
+    {
+        return Vector3.zero;
+    }
+
+    private static Vector3 SphereAABBCollisionResponse(ref Vector3 velocity, SphereCollisionVolume a, AABBCollisionVolume b)
+    {
+        return Vector3.zero;
     }
 }
