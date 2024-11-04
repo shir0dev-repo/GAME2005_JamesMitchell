@@ -65,27 +65,27 @@ public static class Collisions
         switch (first, second)
         {
             case (ColliderType.Sphere, ColliderType.Sphere):
-                return SSCollision;
+                return IsSphereSphereColliding;
             case (ColliderType.Sphere, ColliderType.Plane):
-                return SPCollision;
+                return IsSpherePlaneColliding;
             case (ColliderType.Sphere, ColliderType.Halfspace):
-                return SHCollision;
+                return IsSphereHalfSpaceColliding;
             case (ColliderType.Sphere, ColliderType.AABB):
-                return SBCollision;
+                return IsSphereAABBColliding;
 
             case (ColliderType.Plane, ColliderType.Plane):
-                return PPCollision;
+                return IsPlanePlaneColliding;
             case (ColliderType.Plane, ColliderType.Halfspace):
-                return PHCollision;
+                return IsPlaneHalfSpaceColliding;
             case (ColliderType.Plane, ColliderType.AABB):
-                return PBCollision;
+                return IsPlaneAABBColliding;
 
             case (ColliderType.Halfspace, ColliderType.Halfspace):
-                return HHCollision;
+                return IsHalfSpaceHalfSpaceColliding;
             case (ColliderType.Halfspace, ColliderType.AABB):
-                return HBCollision;
+                return IsHalfSpaceAABBColliding;
             case (ColliderType.AABB, ColliderType.AABB):
-                return BBCollision;
+                return IsAABBAABBCollliding;
 
             default:
                 throw new UnimplementedCollisionException("Collision may be implemented, try switching the order.");
@@ -93,99 +93,101 @@ public static class Collisions
     }
 
     #region Sphere Checks
-    private static bool SSCollision(ICollisionVolume a, ICollisionVolume b)
+    private static bool IsSphereSphereColliding(ICollisionVolume a, ICollisionVolume b)
     {
-        return SphereSphereCollision(a as SphereCollisionVolume, b as SphereCollisionVolume);
+        return IsSphereSphereColliding_Impl(a as SphereCollisionVolume, b as SphereCollisionVolume);
     }
-    private static bool SphereSphereCollision(SphereCollisionVolume a, SphereCollisionVolume b)
+    private static bool IsSphereSphereColliding_Impl(SphereCollisionVolume a, SphereCollisionVolume b)
     {
         float distance = Vector3.Distance(a.transform.position, b.transform.position);
         return distance <= a.Radius + b.Radius;
     }
 
-    private static bool SPCollision(ICollisionVolume a, ICollisionVolume b)
+    private static bool IsSpherePlaneColliding(ICollisionVolume a, ICollisionVolume b)
     {
-        return SpherePlaneCollision(a as SphereCollisionVolume, b as PlaneCollisionVolume);
+        return IsSpherePlaneColliding_Impl(a as SphereCollisionVolume, b as PlaneCollisionVolume);
     }
-    private static bool SpherePlaneCollision(SphereCollisionVolume sphere, PlaneCollisionVolume plane)
+    private static bool IsSpherePlaneColliding_Impl(SphereCollisionVolume sphere, PlaneCollisionVolume plane)
     {
         return plane.GetDistance(sphere.transform.position) <= sphere.Radius;
     }
 
-    private static bool SHCollision(ICollisionVolume a, ICollisionVolume b)
+    private static bool IsSphereHalfSpaceColliding(ICollisionVolume a, ICollisionVolume b)
     {
-        return SphereHalfspaceCollision(a as SphereCollisionVolume, b as HalfspaceCollisionVolume);
+        return IsSphereHalfspaceColliding_Impl(a as SphereCollisionVolume, b as HalfspaceCollisionVolume);
     }
-    private static bool SphereHalfspaceCollision(SphereCollisionVolume sphere, HalfspaceCollisionVolume halfspace)
+    private static bool IsSphereHalfspaceColliding_Impl(SphereCollisionVolume sphere, HalfspaceCollisionVolume halfspace)
     {
         return halfspace.GetSignedDistance(sphere.transform.position) - sphere.Radius <= 0;
     }
 
-    private static bool SBCollision(ICollisionVolume a, ICollisionVolume b)
+    private static bool IsSphereAABBColliding(ICollisionVolume a, ICollisionVolume b)
     {
-        return SphereAABBCollision(a as SphereCollisionVolume, b as AABBCollisionVolume);
+        return IsSphereAABBColliding_Impl(a as SphereCollisionVolume, b as AABBCollisionVolume);
     }
-    private static bool SphereAABBCollision(SphereCollisionVolume a, AABBCollisionVolume b)
+    private static bool IsSphereAABBColliding_Impl(SphereCollisionVolume a, AABBCollisionVolume b)
     {
         return false;
     }
     #endregion
 
     #region Plane Checks
-    private static bool PPCollision(ICollisionVolume a, ICollisionVolume b)
+    private static bool IsPlanePlaneColliding(ICollisionVolume a, ICollisionVolume b)
     {
-        return PlanePlaneCollision(a as PlaneCollisionVolume, b as PlaneCollisionVolume);
+        return IsPlanePlaneColliding_Impl(a as PlaneCollisionVolume, b as PlaneCollisionVolume);
     }
-    private static bool PlanePlaneCollision(PlaneCollisionVolume a, PlaneCollisionVolume b)
+    private static bool IsPlanePlaneColliding_Impl(PlaneCollisionVolume a, PlaneCollisionVolume b)
     {
-        return false;
-    }
-
-    private static bool PHCollision(ICollisionVolume a, ICollisionVolume b)
-    {
-        return PlaneHalfspaceCollision(a as PlaneCollisionVolume, b as HalfspaceCollisionVolume);
-    }
-    private static bool PlaneHalfspaceCollision(PlaneCollisionVolume a, HalfspaceCollisionVolume b)
-    {
-        return false;
+        return Vector3.Dot(a.Axes.Normal, b.Axes.Normal) != 1.0f;
     }
 
-    private static bool PBCollision(ICollisionVolume a, ICollisionVolume b)
+    private static bool IsPlaneHalfSpaceColliding(ICollisionVolume a, ICollisionVolume b)
     {
-        return PlaneAABBCollision(a as PlaneCollisionVolume, b as AABBCollisionVolume);
+        return IsPlaneHalfspaceColliding_Impl(a as PlaneCollisionVolume, b as HalfspaceCollisionVolume);
     }
-    private static bool PlaneAABBCollision(PlaneCollisionVolume a, AABBCollisionVolume b)
+    private static bool IsPlaneHalfspaceColliding_Impl(PlaneCollisionVolume a, HalfspaceCollisionVolume b)
+    {
+        if (b.IsInsideHalfspace(a.transform.position)) return true;
+        else return Vector3.Dot(a.Axes.Normal, b.Axes.Normal) != 1.0f;
+    }
+
+    private static bool IsPlaneAABBColliding(ICollisionVolume a, ICollisionVolume b)
+    {
+        return IsPlaneAABBColliding_Impl(a as PlaneCollisionVolume, b as AABBCollisionVolume);
+    }
+    private static bool IsPlaneAABBColliding_Impl(PlaneCollisionVolume a, AABBCollisionVolume b)
     {
         return false;
     }
     #endregion
 
     #region Half Space Checks
-    private static bool HHCollision(ICollisionVolume a, ICollisionVolume b)
+    private static bool IsHalfSpaceHalfSpaceColliding(ICollisionVolume a, ICollisionVolume b)
     {
-        return HalfspaceHalfspaceCollision(a as HalfspaceCollisionVolume, b as HalfspaceCollisionVolume);
+        return IsHalfspaceHalfspaceColliding_Impl(a as HalfspaceCollisionVolume, b as HalfspaceCollisionVolume);
     }
-    private static bool HalfspaceHalfspaceCollision(HalfspaceCollisionVolume a, HalfspaceCollisionVolume b)
+    private static bool IsHalfspaceHalfspaceColliding_Impl(HalfspaceCollisionVolume a, HalfspaceCollisionVolume b)
     {
-        return false;
+        if (a.IsInsideHalfspace(b.transform.position)) return true;
+        else return Vector3.Dot(a.Axes.Normal, b.Axes.Normal) != -1.0f;
     }
 
-    private static bool HBCollision(ICollisionVolume a, ICollisionVolume b)
+    private static bool IsHalfSpaceAABBColliding(ICollisionVolume a, ICollisionVolume b)
     {
-        return HalfspaceAABBCollision(a as HalfspaceCollisionVolume, b as AABBCollisionVolume);
+        return IsHalfspaceAABBColliding_Impl(a as HalfspaceCollisionVolume, b as AABBCollisionVolume);
     }
-    private static bool HalfspaceAABBCollision(HalfspaceCollisionVolume a, AABBCollisionVolume b)
+    private static bool IsHalfspaceAABBColliding_Impl(HalfspaceCollisionVolume a, AABBCollisionVolume b)
     {
         return false;
     }
     #endregion
 
     #region AABB Checks
-    private static bool BBCollision(ICollisionVolume a, ICollisionVolume b)
+    private static bool IsAABBAABBCollliding(ICollisionVolume a, ICollisionVolume b)
     {
-        return AABBAABBCollision(a as AABBCollisionVolume, b as AABBCollisionVolume);
+        return IsAABBAABBColliding_Impl(a as AABBCollisionVolume, b as AABBCollisionVolume);
     }
-    private static bool AABBAABBCollision(AABBCollisionVolume a, AABBCollisionVolume b)
+    private static bool IsAABBAABBColliding_Impl(AABBCollisionVolume a, AABBCollisionVolume b)
     {
         return false;
     }
