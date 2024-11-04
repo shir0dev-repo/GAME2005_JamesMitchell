@@ -5,16 +5,15 @@ using UnityEngine;
 public class HalfspaceCollisionVolume : PhysicsComponentBase, ICollisionVolume
 {
     public ColliderType Type => ColliderType.Halfspace;
-    
-
     public bool IsKinematic { get; private set; }
-    public bool CurrentlyColliding { get; set; }
     public ICollisionVolume CurrentCollision { get; set; }
+    public bool CurrentlyColliding { get; set; }
 
     public Vector3 CurrentPartitionOrigin { get; set; }
-    public Transform Transform => transform;
 
-    [SerializeField] private PlaneAxis m_axes = new PlaneAxis(Vector3.up);
+    public PlaneAxis Axes => m_axes;
+    private PlaneAxis m_axes;
+    public Transform Transform => transform;
 
     private Vector3 m_positionLastFrame;
     private Quaternion m_rotationLastFrame;
@@ -22,6 +21,8 @@ public class HalfspaceCollisionVolume : PhysicsComponentBase, ICollisionVolume
     protected override void Awake()
     {
         base.Awake();
+
+        m_axes = new PlaneAxis(transform.up);
         m_positionLastFrame = transform.position;
         m_rotationLastFrame = transform.rotation;
     }
@@ -34,15 +35,28 @@ public class HalfspaceCollisionVolume : PhysicsComponentBase, ICollisionVolume
             m_positionLastFrame = transform.position;
             m_rotationLastFrame = transform.rotation;
         }
+
+        Debug.DrawLine(transform.position, transform.position + m_axes.Normal, Color.green);
+        Debug.DrawLine(transform.position, transform.position + m_axes.Tangent, Color.red);
+        Debug.DrawLine(transform.position, transform.position + m_axes.Bitangent, Color.blue);
     }
 
-    public float GetDistance(Vector3 position)
+    public float GetSignedDistance(Vector3 position)
     {
         Vector3 p = position - transform.position;
         return
             m_axes.Normal.x * p.x +
                 m_axes.Normal.y * p.y +
                 m_axes.Normal.z * p.z;
+    }
+    public float GetDistance(Vector3 position)
+    {
+        return
+            Mathf.Abs(
+            m_axes.Normal.x * position.x +
+            m_axes.Normal.y * position.y +
+            m_axes.Normal.z * position.z -
+            m_axes.DistanceFromOrigin);
     }
 
     public bool IsInsideHalfspace(Vector3 position)

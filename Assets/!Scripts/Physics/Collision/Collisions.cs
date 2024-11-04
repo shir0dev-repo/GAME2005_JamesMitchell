@@ -116,7 +116,7 @@ public static class Collisions
     }
     private static bool SphereHalfspaceCollision(SphereCollisionVolume sphere, HalfspaceCollisionVolume halfspace)
     {
-        return halfspace.GetDistance(sphere.transform.position) - sphere.Radius <= 0;
+        return halfspace.GetSignedDistance(sphere.transform.position) - sphere.Radius <= 0;
     }
 
     private static bool SBCollision(ICollisionVolume a, ICollisionVolume b)
@@ -248,7 +248,24 @@ public static class Collisions
 
     private static Vector3 SphereHalfspaceCollisionResponse(ref Vector3 velocity, SphereCollisionVolume a, HalfspaceCollisionVolume b)
     {
-        return Vector3.zero;
+        Vector3 normal = b.Axes.Normal;
+        float mag = velocity.magnitude;
+        velocity = Vector3.Reflect(velocity.normalized, normal) * mag;
+
+        Debug.Log("SHS collision");
+
+        float displacement = 1;
+
+        if (b.IsInsideHalfspace(a.Center))
+        {
+            displacement = b.GetDistance(a.Center) + a.Radius;
+        }
+        else
+        {
+            displacement = a.Radius - b.GetDistance(a.Center);
+        }
+
+        return normal * displacement;
     }
 
     private static Vector3 SphereAABBCollisionResponse(ref Vector3 velocity, SphereCollisionVolume a, AABBCollisionVolume b)

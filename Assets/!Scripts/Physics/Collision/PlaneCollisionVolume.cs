@@ -22,6 +22,7 @@ public class PlaneCollisionVolume : PhysicsComponentBase, ICollisionVolume
     protected override void Awake()
     {
         base.Awake();
+
         m_axes = new PlaneAxis(transform.up);
         m_positionLastFrame = transform.position;
         m_rotationLastFrame = transform.rotation;
