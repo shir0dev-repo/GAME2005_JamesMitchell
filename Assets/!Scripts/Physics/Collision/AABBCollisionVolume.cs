@@ -11,4 +11,7 @@ public class AABBCollisionVolume : ICollisionVolume
     public Vector3 CurrentPartitionOrigin { get; set; }
     public Transform Transform => throw new System.NotImplementedException();
 
+    public ICollisionVolume CurrentCollision { get; set; }
+
+    public bool IsKinematic => false;
 }

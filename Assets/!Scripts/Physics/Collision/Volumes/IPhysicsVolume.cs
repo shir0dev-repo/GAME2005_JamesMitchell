@@ -6,7 +6,6 @@ public interface IPhysicsVolume
     public Vector3 Center { get; } 
     public Quaternion Rotation { get; }
 
-    public bool CurrentlyColliding { get; set; }
     public Vector3 CurrentPartitionOrigin { get; set; }
 
     /// <summary>

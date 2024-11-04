@@ -4,15 +4,17 @@ using UnityEngine;
 
 public class HalfspaceCollisionVolume : PhysicsComponentBase, ICollisionVolume
 {
-    [SerializeField] private PlaneAxis m_axes = new PlaneAxis(Vector3.up);
     public ColliderType Type => ColliderType.Halfspace;
+    
+
+    public bool IsKinematic { get; private set; }
     public bool CurrentlyColliding { get; set; }
-    private readonly Stack<ICollisionVolume> m_currentCollisions = new();
-    public Stack<ICollisionVolume> CurrentCollisions { get => m_currentCollisions; }
+    public ICollisionVolume CurrentCollision { get; set; }
 
     public Vector3 CurrentPartitionOrigin { get; set; }
     public Transform Transform => transform;
 
+    [SerializeField] private PlaneAxis m_axes = new PlaneAxis(Vector3.up);
 
     private Vector3 m_positionLastFrame;
     private Quaternion m_rotationLastFrame;

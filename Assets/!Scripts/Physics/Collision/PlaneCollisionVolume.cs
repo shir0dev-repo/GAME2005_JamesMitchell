@@ -5,19 +5,19 @@ using UnityEngine;
 
 public class PlaneCollisionVolume : PhysicsComponentBase, ICollisionVolume
 {
-
-    [SerializeField] private PlaneAxis m_axes = new(Vector3.up);
-
     public ColliderType Type => ColliderType.Plane;
-    public bool CurrentlyColliding { get; set; }
-    private readonly Stack<ICollisionVolume> m_currentCollisions = new();
-    public Stack<ICollisionVolume> CurrentCollisions { get => m_currentCollisions; }
 
+    public bool IsKinematic { get; private set; }
+    public bool CurrentlyColliding { get; set; }
+    public ICollisionVolume CurrentCollision { get; set; }
     public Vector3 CurrentPartitionOrigin { get; set; }
+
     public Transform Transform => transform;
 
     private Vector3 m_positionLastFrame;
     private Quaternion m_rotationLastFrame;
+
+    private PlaneAxis m_axes = new(Vector3.up);
 
     protected override void Awake()
     {

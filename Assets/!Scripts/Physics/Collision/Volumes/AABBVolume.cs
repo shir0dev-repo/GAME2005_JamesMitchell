@@ -4,20 +4,20 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class CubeVolume : PhysicsComponentBase, ICollisionVolume, IPhysicsVolume
+public class AABBVolume : PhysicsComponentBase, ICollisionVolume, IPhysicsVolume
 {
-#region ICollisionVolume
+    public ColliderType Type => ColliderType.AABB;
+
+    public bool IsKinematic { get; private set; }
     public bool CurrentlyColliding { get; set; }
+    public ICollisionVolume CurrentCollision { get; set; }
+
     public Vector3 CurrentPartitionOrigin { get; set; }
     public Transform Transform { get => transform; }
-    private readonly Stack<ICollisionVolume> m_currentCollisions = new();
-    public Stack<ICollisionVolume> CurrentCollisions { get => m_currentCollisions; }
-    #endregion
+    
 
-    #region IPhysicsVolume
     public Vector3 Center { get => transform.position; }
     public Quaternion Rotation { get => transform.rotation; }
-#endregion
 
     [SerializeField] private Vector3 m_halfExtents = Vector3.one * 0.5f;
     private readonly Vector3[] m_points = new Vector3[8];
@@ -25,7 +25,7 @@ public class CubeVolume : PhysicsComponentBase, ICollisionVolume, IPhysicsVolume
     public Vector3 HalfExtents => m_halfExtents;
     public Vector3[] Points => m_points;
 
-    public ColliderType Type => ColliderType.AABB;
+    
 
     private Vector3 m_lastKnownNormal = Vector3.zero;
     private ConvexHull m_projectedHull;

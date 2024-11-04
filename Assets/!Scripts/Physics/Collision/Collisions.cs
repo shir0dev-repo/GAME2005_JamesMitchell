@@ -183,8 +183,51 @@ public static class Collisions
     }
     #endregion
 
-    public static Vector3 GetResponse(ICollisionVolume a, ICollisionVolume b)
+    public static Vector3 GetResponse(ref Vector3 velocity, ICollisionVolume a, ICollisionVolume b)
     {
-        return Vector3.zero;
+        return SSResponse(ref velocity, a as SphereCollisionVolume, b as SphereCollisionVolume);
+        Vector3 result;
+        switch (a.Type, b.Type)
+        {
+            case (ColliderType.Sphere, ColliderType.Sphere):
+                
+                
+        }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="velocity"></param>
+    /// <param name="a"></param>
+    /// <param name="b"></param>
+    /// <returns>
+    /// The displacement vector that unintersects <see cref="SphereCollisionVolume"/> <paramref name="a"/>.<br/>
+    /// If <paramref name="b"/> is also kinematic, displacement vector will have 50% magnitude to account for both volumes being displaced.
+    /// </returns>
+    private static Vector3 SSResponse(ref Vector3 velocity, SphereCollisionVolume a, SphereCollisionVolume b)
+    {
+        Vector3 currentDisplacement = a.transform.position + velocity * PhysicsManager.Instance.DeltaTime;
+
+        Vector3 collisionPlaneNormal = (a.Center - b.Center).normalized;
+        float mag = velocity.magnitude;
+        velocity = Vector3.Reflect(velocity.normalized, collisionPlaneNormal) * mag;
+
+        Debug.Log("collision");
+
+        if (a.IsKinematic == false)
+            return Vector3.zero;
+
+        float sumRadii = a.Radius + b.Radius;
+        float distance = Vector3.Distance(a.Center, b.Center);
+        float intersectionDistance = Mathf.Abs(distance - sumRadii);
+
+        Vector3 displacement = collisionPlaneNormal * intersectionDistance;
+        //velocity -= displacement * currentDisplacement.magnitude;
+
+        if (b.IsKinematic == false)
+            displacement *= 0.5f;
+
+        return displacement;
     }
 }

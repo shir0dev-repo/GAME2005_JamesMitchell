@@ -19,7 +19,6 @@ public class CollisionManager : Singleton<CollisionManager>
     [SerializeField] private Vector3Int m_chunkSize = Vector3Int.one * 16;
 
     private List<ICollisionVolume> m_planesAndHalfspaces = new();
-    public static event EventHandler<OnCollisionArgs> OnCollision;
 
     protected override void Awake()
     {
@@ -79,13 +78,14 @@ public class CollisionManager : Singleton<CollisionManager>
                 
                 compare = chunk.Objects[j];
 
-                current.CurrentlyColliding = compare.CurrentlyColliding = current.IsColliding(compare);
-                
-                if (!compare.CurrentCollisions.Contains(current))
-                    compare.CurrentCollisions.Push(current);
-
-                if (!current.CurrentCollisions.Contains(compare))
-                    current.CurrentCollisions.Push(compare);
+                bool collisionOccurred = current.IsColliding(compare);
+                if (collisionOccurred)
+                {
+                    current.CurrentlyColliding = true;
+                    current.CurrentCollision = compare;
+                    compare.CurrentlyColliding = true;
+                    compare.CurrentCollision = current;
+                }
             }
         }
     }

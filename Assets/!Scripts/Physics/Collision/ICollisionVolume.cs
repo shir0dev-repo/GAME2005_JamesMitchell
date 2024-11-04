@@ -5,17 +5,17 @@ using UnityEngine;
 public interface ICollisionVolume : IPartitionable
 {
     ColliderType Type { get; }
+    ICollisionVolume CurrentCollision { get; set; }
     bool CurrentlyColliding { get; set; }
-    Stack<ICollisionVolume> CurrentCollisions { get; }
+    bool IsKinematic { get; }
 
     bool IsColliding(ICollisionVolume other)
     {
         return Collisions.IsColliding(this, other);    
     }
-
-    Vector3 GetResponseVector(ICollisionVolume other)
+    Vector3 GetCollisionResponse(ref Vector3 velocity, ICollisionVolume other)
     {
-        return Collisions.GetResponse(this, other);
+        return Collisions.GetResponse(ref velocity, this, other);
     }
 }
 
