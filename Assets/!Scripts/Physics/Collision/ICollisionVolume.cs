@@ -6,7 +6,7 @@ public interface ICollisionVolume : IPartitionable
 {
     ColliderType Type { get; }
     VelocityMode VelocityMode { get; }
-    ICollisionVolume CurrentCollision { get; set; }
+    Stack<ICollisionVolume> CurrentCollisions { get; }
     bool CurrentlyColliding { get; set; }
     bool IsKinematic { get; }
 

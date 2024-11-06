@@ -1,0 +1,3 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="True">
+    <uie:PropertyField binding-path="m_simulationMode" label="Simulation Mode" name="SimulationMode" class="unity-base-field_aligned" />
+</ui:UXML>

@@ -5,22 +5,23 @@ using UnityEngine;
 public class SphereCollisionVolume : PhysicsComponentBase, IPhysicsVolume, ICollisionVolume
 {
     public ColliderType Type => ColliderType.Sphere;
-    public VelocityMode VelocityMode => m_velocityMode;
-    [SerializeField] private VelocityMode m_velocityMode;
-
+    
     public float Radius => m_radius;
     [SerializeField] private float m_radius = 0.5f;
 
     public bool IsKinematic { get => m_isKinematic; }
     [SerializeField] private bool m_isKinematic = true;
 
+    public VelocityMode VelocityMode => m_velocityMode;
+    [SerializeField] private VelocityMode m_velocityMode;
+
+    public bool CurrentlyColliding { get; set; }
+    public Stack<ICollisionVolume> CurrentCollisions { get => m_currentCollisions; }
+    private Stack<ICollisionVolume> m_currentCollisions = new();
+
     public Transform Transform { get => transform; }
     public Vector3 Center { get => transform.position; }
     public Quaternion Rotation { get => transform.rotation; }
-
-    
-    public ICollisionVolume CurrentCollision { get; set; }
-    public bool CurrentlyColliding { get; set; }
 
     public Vector3 CurrentPartitionOrigin { get; set; }
 
@@ -34,15 +35,14 @@ public class SphereCollisionVolume : PhysicsComponentBase, IPhysicsVolume, IColl
 
     public override Vector3 Modify(Vector3 initial)
     {
-        if (IsKinematic == false) return initial;
-        else if (initial.sqrMagnitude <= 0.001f) return Vector3.zero;
-
-        if (CurrentCollision != null)
+        Vector3 adjustment = Vector3.zero;
+        while (CurrentCollisions.Count > 0)
         {
-            transform.position += (this as ICollisionVolume).GetCollisionResponse(ref initial, CurrentCollision);
-            CurrentCollision = null;            
+            var collision = CurrentCollisions.Pop();
+            adjustment += (this as ICollisionVolume).GetCollisionResponse(ref initial, collision);
         }
-        
+
+        transform.position += adjustment;
         return initial;
     }
 

@@ -76,7 +76,7 @@ public class CollisionManager : Singleton<CollisionManager>
                 if (collisionOccurred)
                 {
                     current.CurrentlyColliding = true;
-                    current.CurrentCollision = compare;
+                    current.CurrentCollisions.Push(compare);
                 }
             }
             for (int j = 0; j < chunk.Objects.Count; j++)
@@ -89,9 +89,9 @@ public class CollisionManager : Singleton<CollisionManager>
                 if (collisionOccurred)
                 {
                     current.CurrentlyColliding = true;
-                    current.CurrentCollision = compare;
+                    current.CurrentCollisions.Push(compare);
                     compare.CurrentlyColliding = true;
-                    compare.CurrentCollision = current;
+                    compare.CurrentCollisions.Push(current);
                 }
             }
         }

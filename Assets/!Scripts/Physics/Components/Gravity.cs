@@ -10,6 +10,7 @@ public class Gravity : PhysicsComponentBase
 
     public override Vector3 Modify(Vector3 initial)
     {
-        return initial + m_gravityScale * m_body.Mass * PhysicsManager.Instance.DeltaTime * m_gravity;
+        Vector3 g = m_gravityScale * m_body.Mass * PhysicsManager.Instance.DeltaTime * m_gravity;
+        return initial + g;
     }
 }

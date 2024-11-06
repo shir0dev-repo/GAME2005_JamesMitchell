@@ -5,12 +5,13 @@ using UnityEngine;
 public class HalfspaceCollisionVolume : PhysicsComponentBase, ICollisionVolume
 {
     public ColliderType Type => ColliderType.Halfspace;
-    public VelocityMode VelocityMode => m_velocityMode;
-    [SerializeField] private VelocityMode m_velocityMode;
+    public VelocityMode VelocityMode => VelocityMode.ZeroOnImpact;
 
-    public bool IsKinematic { get; private set; }
-    public ICollisionVolume CurrentCollision { get; set; }
+    public bool IsKinematic => false;
+
     public bool CurrentlyColliding { get; set; }
+    public Stack<ICollisionVolume> CurrentCollisions { get => m_currentCollisions; }
+    private Stack<ICollisionVolume> m_currentCollisions = new();
 
     public Vector3 CurrentPartitionOrigin { get; set; }
 
@@ -47,19 +48,12 @@ public class HalfspaceCollisionVolume : PhysicsComponentBase, ICollisionVolume
     public float GetSignedDistance(Vector3 position)
     {
         Vector3 p = position - transform.position;
-        return
-            m_axes.Normal.x * p.x +
-                m_axes.Normal.y * p.y +
-                m_axes.Normal.z * p.z;
+        return Vector3.Dot(m_axes.Normal, p);
     }
     public float GetDistance(Vector3 position)
     {
         return
-            Mathf.Abs(
-            m_axes.Normal.x * position.x +
-            m_axes.Normal.y * position.y +
-            m_axes.Normal.z * position.z -
-            m_axes.DistanceFromOrigin);
+            Mathf.Abs(Vector3.Dot(m_axes.Normal, position - transform.position));
     }
 
     public bool IsInsideHalfspace(Vector3 position)

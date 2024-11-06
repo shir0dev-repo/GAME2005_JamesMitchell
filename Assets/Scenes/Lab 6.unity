@@ -157,7 +157,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_simulationMode: 0
   m_mass: 1
-  m_dragCoefficient: 1
+  m_dragCoefficient: 0
   m_velocity: {x: 0, y: 0, z: 0}
   physicsComponents:
   - {fileID: 1265815084}
@@ -221,7 +221,7 @@ Transform:
   m_GameObject: {fileID: 1265815078}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1, y: 2, z: 0}
+  m_LocalPosition: {x: 1, y: 50, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

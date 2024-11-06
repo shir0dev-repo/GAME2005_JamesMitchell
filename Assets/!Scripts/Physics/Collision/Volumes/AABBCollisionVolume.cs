@@ -4,15 +4,17 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class AABBVolume : PhysicsComponentBase, ICollisionVolume, IPhysicsVolume
+public class AABBCollisionVolume : PhysicsComponentBase, ICollisionVolume, IPhysicsVolume
 {
     public ColliderType Type => ColliderType.AABB;
     public VelocityMode VelocityMode => m_velocityMode;
     [SerializeField] private VelocityMode m_velocityMode;
 
     public bool IsKinematic { get; private set; }
+
     public bool CurrentlyColliding { get; set; }
-    public ICollisionVolume CurrentCollision { get; set; }
+    public Stack<ICollisionVolume> CurrentCollisions { get => m_currentCollisions; }
+    [SerializeField] private Stack<ICollisionVolume> m_currentCollisions = new();
 
     public Vector3 CurrentPartitionOrigin { get; set; }
     public Transform Transform { get => transform; }

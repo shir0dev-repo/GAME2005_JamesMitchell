@@ -196,7 +196,9 @@ public static class Collisions
     /// <summary>
     /// Calculates the required displacement to unintersect <see cref="ICollisionVolume"/>s <paramref name="a"/> and <paramref name="b"/>.<br/>
     /// If <paramref name="a"/>'s <see cref="VelocityMode"/> is <see cref="VelocityMode.ZeroOnImpact"/>, <paramref name="velocity"/> will 
-    /// be set to <see cref="Vector3.zero"/>.
+    /// be set to <see cref="Vector3.zero"/>.<br/>
+    /// If <paramref name="a"/>'s <see cref="VelocityMode"/> is <see cref="VelocityMode.Reflect"/>, <paramref name="velocity"/> will be reflected along
+    /// the plane created from the collision.
     /// </summary>
     /// <param name="velocity">The current velocity (if any) of <see cref="ICollisionVolume"/> <paramref name="a"/>.</param>
     /// <param name="a">The current <see cref="ICollisionVolume"/> to check collisions with.</param>
@@ -221,6 +223,7 @@ public static class Collisions
         };
     }
 
+    #region Sphere Responses
     private static Vector3 SphereSphereCollisionResponse(ref Vector3 velocity, SphereCollisionVolume a, SphereCollisionVolume b)
     {
         Vector3 collisionPlaneNormal = (a.Center - b.Center).normalized;
@@ -255,21 +258,21 @@ public static class Collisions
     private static Vector3 SpherePlaneCollisionResponse(ref Vector3 velocity, SphereCollisionVolume a, PlaneCollisionVolume b)
     {
         Vector3 normal = b.Axes.Normal;
+
+        float distance = b.GetDistance(a.Center);
+        Vector3 displacement = Vector3.Project(a.Center - b.transform.position, normal) * (a.Radius - distance);
+
         if (a.VelocityMode == VelocityMode.ZeroOnImpact)
         {
             velocity = Vector3.zero;
         }
         else
         {
-            float mag = velocity.magnitude;
-            velocity = Vector3.Reflect(velocity.normalized, normal) * mag;
+            velocity = Vector3.Reflect(velocity, normal);
         }
 
-        Debug.Log("SP collision");
-
-        float distance = a.Radius - b.GetDistance(a.Center);
-
-        return normal * distance;
+        
+        return displacement;
     }
 
     private static Vector3 SphereHalfspaceCollisionResponse(ref Vector3 velocity, SphereCollisionVolume a, HalfspaceCollisionVolume b)
@@ -297,4 +300,6 @@ public static class Collisions
     {
         return Vector3.zero;
     }
+    #endregion
+
 }

@@ -7,12 +7,14 @@ public enum SimulationMode { Kinematic, Static };
 public class PhysicsBody : MonoBehaviour
 {
     public SimulationMode SimulationMode => m_simulationMode;
-    public float Mass => m_mass;
-    public float Drag => m_dragCoefficient;
-
     [SerializeField] protected SimulationMode m_simulationMode;
-    [SerializeField] protected float m_mass = 1f;
+
+    public float Mass => m_mass;
+    [SerializeField, Min(0.001f)] protected float m_mass = 1f;
+
+    public float Drag => m_dragCoefficient;
     [SerializeField, Range(0, 1.5f)] protected float m_dragCoefficient = 1f;
+
 
     [SerializeField, ReadOnly] protected Vector3 m_velocity = Vector3.zero;
     [SerializeField] protected PhysicsComponentBase[] physicsComponents;
