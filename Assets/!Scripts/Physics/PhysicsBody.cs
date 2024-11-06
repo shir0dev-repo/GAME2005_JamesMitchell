@@ -15,8 +15,11 @@ public class PhysicsBody : MonoBehaviour
     public float Drag => m_dragCoefficient;
     [SerializeField, Range(0, 1.5f)] protected float m_dragCoefficient = 1f;
 
-
+    public Vector3 Velocity => m_velocity;
     [SerializeField, ReadOnly] protected Vector3 m_velocity = Vector3.zero;
+    
+    public Vector3 VelocityLastFrame => m_velocityLastFrame;
+    private Vector3 m_velocityLastFrame = Vector3.zero;
     [SerializeField] protected PhysicsComponentBase[] physicsComponents;
 
     protected ProductionLine<Vector3> m_velocityLine;
@@ -36,8 +39,10 @@ public class PhysicsBody : MonoBehaviour
     public void Move()
     {
         if (m_simulationMode == SimulationMode.Static) return;
-
+        
+        m_velocityLastFrame = m_velocity;
         m_velocity = m_velocityLine.GetResult();
+        
         m_velocityLine.SetInitial(m_velocity);
         transform.position += m_velocity * PhysicsManager.Instance.DeltaTime;
 

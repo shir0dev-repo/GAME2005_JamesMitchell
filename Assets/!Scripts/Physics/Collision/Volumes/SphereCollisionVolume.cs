@@ -35,15 +35,20 @@ public class SphereCollisionVolume : PhysicsComponentBase, IPhysicsVolume, IColl
 
     public override Vector3 Modify(Vector3 initial)
     {
+        if (CurrentCollisions.Count == 0) return initial;
+
         Vector3 adjustment = Vector3.zero;
+        Vector3 deltaV = initial - m_body.VelocityLastFrame;
+
         while (CurrentCollisions.Count > 0)
         {
             var collision = CurrentCollisions.Pop();
             adjustment += (this as ICollisionVolume).GetCollisionResponse(ref initial, collision);
         }
-
         transform.position += adjustment;
-        return initial;
+
+
+        return initial + deltaV;
     }
 
     private void OnDrawGizmos()
