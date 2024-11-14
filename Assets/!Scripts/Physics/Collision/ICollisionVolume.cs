@@ -4,7 +4,7 @@ using UnityEngine;
 
 public interface ICollisionVolume : IPartitionable
 {
-    VolumeType Type { get; }
+    ColliderType Type { get; }
     bool CurrentlyColliding { get; set; }
     bool IsColliding(ICollisionVolume other)
     {

@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-
 public class SphereCollisionComponent : CollisionComponent
 {
     public override ColliderType Type => ColliderType.Sphere;
