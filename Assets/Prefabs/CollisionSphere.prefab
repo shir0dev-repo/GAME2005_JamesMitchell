@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 7486036753963121242}
   - component: {fileID: 2491021072067700389}
   - component: {fileID: 7706793468754337661}
-  - component: {fileID: 8919622727148233422}
   m_Layer: 0
   m_Name: CollisionSphere
   m_TagString: Untagged
@@ -97,22 +96,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 89a0dba6051e8a840acf18037ca61336, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_simulationMode: 0
   m_mass: 1
   m_dragCoefficient: 1
   m_velocity: {x: 0, y: 0, z: 0}
   physicsComponents: []
-  m_velocityLine:
-    m_productionState: []
---- !u!114 &8919622727148233422
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6273347135427247747}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7e5c4ded9f5e58c4fb337fb8533023ec, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_radius: 0.5

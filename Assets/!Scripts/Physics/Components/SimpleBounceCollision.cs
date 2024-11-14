@@ -7,7 +7,7 @@ public class SimpleBounceCollision : PhysicsComponentBase
     [SerializeField] private float m_collisionHeight = 0;
     [SerializeField] private float m_collisionRadius = 0.5f;
 
-    public override Vector3 Modify(Vector3 initial)
+    public override Vector3 GetForce(Vector3 initial)
     {
         if (transform.position.y < m_collisionHeight + m_collisionRadius)
         {

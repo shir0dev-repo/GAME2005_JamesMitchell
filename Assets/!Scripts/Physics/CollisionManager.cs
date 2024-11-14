@@ -25,12 +25,14 @@ public class CollisionManager : Singleton<CollisionManager>
     {
         if (body.TryGetComponent(out ICollisionVolume cv))
         {
-            if (cv is SphereCollisionVolume)
-                m_space.AssignPartition(cv);
-            else
+            if (cv is PlaneCollisionComponent or HalfspaceCollisionComponent)
             {
                 m_planesAndHalfspaces.Add(cv);
                 Debug.Log("added one");
+            }
+            else
+            {
+                m_space.AssignPartition(cv);
             }
         }
     }
@@ -58,7 +60,12 @@ public class CollisionManager : Singleton<CollisionManager>
             foreach (var planarVolume in m_planesAndHalfspaces)
             {
                 compare = planarVolume;
-                current.CurrentlyColliding = compare.IsColliding(current);
+                bool collisionOccurred = compare.IsColliding(current);
+                if (collisionOccurred)
+                {
+                    current.CurrentlyColliding = true;
+                    current.CurrentCollisions.Push(compare);
+                }
             }
             for (int j = 0; j < chunk.Objects.Count; j++)
             {
@@ -66,7 +73,14 @@ public class CollisionManager : Singleton<CollisionManager>
                 
                 compare = chunk.Objects[j];
 
-                current.CurrentlyColliding = compare.CurrentlyColliding = current.IsColliding(compare);                
+                bool collisionOccurred = current.IsColliding(compare);
+                if (collisionOccurred)
+                {
+                    current.CurrentlyColliding = true;
+                    current.CurrentCollisions.Push(compare);
+                    compare.CurrentlyColliding = true;
+                    compare.CurrentCollisions.Push(current);
+                }
             }
         }
     }

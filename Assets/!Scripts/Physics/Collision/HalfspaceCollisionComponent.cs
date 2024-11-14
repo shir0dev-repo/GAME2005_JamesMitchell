@@ -2,22 +2,22 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class HalfspaceCollisionVolume : PhysicsComponentBase, ICollisionVolume
+public class HalfspaceCollisionComponent : CollisionComponent, ICollisionVolume
 {
-    [SerializeField] private PlaneAxis m_axes = new PlaneAxis(Vector3.up);
-    public VolumeType Type => VolumeType.Halfspace;
-    public bool CurrentlyColliding { get; set; }
-
-    public Vector3 CurrentPartitionOrigin { get; set; }
-    public Transform Transform => transform;
+    public override ColliderType Type => ColliderType.Halfspace;
+    public override VelocityMode VelocityMode => VelocityMode.ZeroOnImpact;
+    public override bool IsKinematic => false;
+    
+    public PlaneAxis Axes => m_axes;
+    private PlaneAxis m_axes;   
 
 
     private Vector3 m_positionLastFrame;
     private Quaternion m_rotationLastFrame;
 
-    protected override void Awake()
+    private void Awake()
     {
-        base.Awake();
+        m_axes = new PlaneAxis(transform.up);
         m_positionLastFrame = transform.position;
         m_rotationLastFrame = transform.rotation;
     }
@@ -32,7 +32,13 @@ public class HalfspaceCollisionVolume : PhysicsComponentBase, ICollisionVolume
         }
     }
 
-    public float GetDistance(Vector3 position)
+    /// <summary>Half spaces are infinite, and that would be baaad.</summary>
+    public override float CrossSectionalArea(Vector3 normal)
+    {
+        return 1;
+    }
+
+    public float GetSignedDistance(Vector3 position)
     {
         Vector3 p = position - transform.position;
         return
@@ -56,16 +62,5 @@ public class HalfspaceCollisionVolume : PhysicsComponentBase, ICollisionVolume
         
         // closed halfspace, care about points on hyperplane as well
         return nDotP <= 0;
-    }
-
-    public override Vector3 Modify(Vector3 initial)
-    {
-        /*
-        The plan is to use the existing system to allow for the collision object to "react" to collisions,
-        and essentially use the last point in the production line to "push out" from the collision object.
-        For now, just return the initial velocity at this point to avoid modifying it.
-        */
-
-        return initial;
     }
 }

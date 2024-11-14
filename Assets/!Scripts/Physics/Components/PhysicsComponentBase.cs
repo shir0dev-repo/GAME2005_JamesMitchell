@@ -6,7 +6,7 @@ using UnityEngine;
 public abstract class PhysicsComponentBase : MonoBehaviour, IPhysicsComponent
 {
     protected PhysicsBody m_body;
-    public abstract Vector3 Modify(Vector3 initial);
+    public abstract Vector3 GetForce(Vector3 initial);
 
     protected virtual void Awake()
     {

@@ -4,5 +4,5 @@ using UnityEngine;
 
 public interface IPhysicsComponent
 {
-    Vector3 Modify(Vector3 initial);
+    Vector3 GetForce(Vector3 initial);
 }

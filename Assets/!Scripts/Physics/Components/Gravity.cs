@@ -8,8 +8,9 @@ public class Gravity : PhysicsComponentBase
     [SerializeField] private Vector3 m_gravity = 9.81f * Vector3.down;
     public Vector3 GForce => m_gravity * m_gravityScale;
 
-    public override Vector3 Modify(Vector3 initial)
+    public override Vector3 GetForce(Vector3 initial)
     {
-        return initial + m_gravityScale * m_body.Mass * PhysicsManager.Instance.DeltaTime * m_gravity;
+        Vector3 g = m_gravityScale * m_body.Mass * PhysicsManager.Instance.DeltaTime * m_gravity;
+        return g;
     }
 }
