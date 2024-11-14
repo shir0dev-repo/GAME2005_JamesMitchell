@@ -43,9 +43,8 @@ public abstract class CollisionComponent : MonoBehaviour, ICollisionVolume, IPhy
     {
         while (CurrentCollisions.Count > 0)
         {
-            var collision = CurrentCollisions.Pop();
+            ICollisionVolume collision = CurrentCollisions.Pop();
             transform.position += (this as ICollisionVolume).GetCollisionResponse(ref resultantVelocity, collision);
-             
         }
     }
 }

@@ -21,8 +21,6 @@ public class PhysicsBody : MonoBehaviour
     private CollisionComponent m_collisionComponent;
     private bool m_collisionsEnabled = false;
 
-    [SerializeField] protected ProductionLine<Vector3> m_velocityLine;
-
     private void Awake()
     {
         m_collisionsEnabled = TryGetComponent(out m_collisionComponent);

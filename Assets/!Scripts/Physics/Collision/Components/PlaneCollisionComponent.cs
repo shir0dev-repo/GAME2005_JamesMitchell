@@ -35,9 +35,8 @@ public class PlaneCollisionComponent : CollisionComponent
     /// <summary>Planes are infinite, and that would be baaad.</summary>
     public override float CrossSectionalArea(Vector3 _) => 1;
 
-    public float GetSignedDistance(Vector3 position)
+    public float GetDistance(Vector3 position)
     {
-
         return
             Mathf.Abs(
             m_axes.Normal.x * position.x +

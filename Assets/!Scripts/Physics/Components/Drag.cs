@@ -6,17 +6,17 @@ using UnityEngine;
 public class Drag : PhysicsComponentBase
 {
     public const float AIR_DENSITY = 1.225f;
-    private PhysicsVolume m_volume;
+    private CollisionComponent m_collisionComponent;
 
     protected override void Awake()
     {
         base.Awake();
-        m_volume = GetComponent<PhysicsVolume>();
+        m_collisionComponent = GetComponent<CollisionComponent>();
     }
 
     public override Vector3 GetForce(Vector3 initial)
     {
-        float projectedArea = m_volume.CrossSectionalArea(initial.normalized);
+        float projectedArea = m_collisionComponent.CrossSectionalArea(initial.normalized);
         
         //https://www.grc.nasa.gov/www/k-12/VirtualAero/BottleRocket/airplane/drageq.html thx nasa
         float speedSqr = initial.sqrMagnitude;
