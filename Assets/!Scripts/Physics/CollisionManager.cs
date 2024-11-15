@@ -38,18 +38,11 @@ public class CollisionManager : Singleton<CollisionManager>
 
         if (collider is PlaneCollisionComponent or HalfspaceCollisionComponent)
         {
-            if (!m_planesAndHalfspaces.Contains(collider))
-            {
-                m_planesAndHalfspaces.Add(collider);
-            }
+            m_planesAndHalfspaces.Add(collider);
         }
         else
         {
-            if (!m_currentlySimulatedColliders.Contains(collider))
-            {
-                m_currentlySimulatedColliders.Add(collider);
-                m_space.AssignPartition(collider);
-            }
+            m_space.AssignPartition(collider);
         }
     }
 
@@ -63,7 +56,6 @@ public class CollisionManager : Singleton<CollisionManager>
         }
         else
         {
-            m_currentlySimulatedColliders.Remove(collider);
             Vector3Int key = m_space.GetKey(collider.transform.position);
             if (m_space.Partitions.ContainsKey(key))
             {
@@ -110,7 +102,7 @@ public class CollisionManager : Singleton<CollisionManager>
         }
     }
 
-    protected override void OnApplicationQuit()    
+    protected override void OnApplicationQuit()
     {
         PhysicsBodyUpdateSystem.OnMarkForUpdate -= MarkForUpdate;
         base.OnApplicationQuit();

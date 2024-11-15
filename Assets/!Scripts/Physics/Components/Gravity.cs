@@ -10,7 +10,7 @@ public class Gravity : PhysicsComponentBase
 
     public override Vector3 GetForce(Vector3 initial)
     {
-        Vector3 g = m_gravityScale * m_body.Mass * PhysicsManager.Instance.DeltaTime * m_gravity;
+        Vector3 g = m_gravityScale * m_body.Mass * PhysicsBodyUpdateSystem.TimeStep * m_gravity;
         return g;
     }
 }

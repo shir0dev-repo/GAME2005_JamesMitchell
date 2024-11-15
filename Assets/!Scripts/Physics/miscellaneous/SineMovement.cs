@@ -15,8 +15,8 @@ public class SineMovement : MonoBehaviour
 
     public void Move()
     {
-        float dt = PhysicsManager.Instance.DeltaTime;
-        
+        float dt = PhysicsBodyUpdateSystem.TimeStep;
+
         Vector3 position = new();
         position.x = transform.position.x + (-Mathf.Sin(m_timeElapsed * m_frequency)) * m_frequency * m_amplitude * dt;
         position.y = transform.position.y + Mathf.Cos(m_timeElapsed * m_frequency) * m_frequency * m_amplitude * dt;

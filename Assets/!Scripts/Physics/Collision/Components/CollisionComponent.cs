@@ -26,30 +26,11 @@ public abstract class CollisionComponent : MonoBehaviour, ICollisionVolume, IPhy
         CollisionManager.AddToSimulation(this);
     }
 
-    public Vector3 ResolveCollisions(ref Vector3 resultantVelocity)
-    {
-        if (!IsKinematic) CurrentCollisions.Clear();
-
-        if (CurrentCollisions.Count == 0) return transform.position;
-
-        Vector3 displacement = Vector3.zero;
-
-        while (CurrentCollisions.Count > 0)
-        {
-            var collision = CurrentCollisions.Pop();
-            displacement += (this as ICollisionVolume).GetCollisionResponse(ref resultantVelocity, collision);
-        }
-
-        // return the position in world space where collision would be resolved
-        return transform.position + displacement;
-    }
-
     public void ResolveCollisionsDirect(ref Vector3 resultantVelocity)
     {
         while (CurrentCollisions.Count > 0)
         {
-            ICollisionVolume collision = CurrentCollisions.Pop();
-            transform.position += (this as ICollisionVolume).GetCollisionResponse(ref resultantVelocity, collision);
+            transform.position += (this as ICollisionVolume).GetCollisionResponse(ref resultantVelocity, CurrentCollisions.Pop());
         }
     }
 

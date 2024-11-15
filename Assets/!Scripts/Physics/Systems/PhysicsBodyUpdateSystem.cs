@@ -1,10 +1,5 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Reflection;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.LowLevel;
 
@@ -45,11 +40,7 @@ public class PhysicsBodyUpdateSystem
             }
         };
 
-        PlayerLoopInjector.InsertSystemAfter(playerLoopSystem, typeof(UnityEngine.PlayerLoop.Update.ScriptRunBehaviourUpdate));
-        //PlayerLoopInjector.InsertSystemAfter(playerLoopSystem, typeof(UnityEngine.PlayerLoop.TimeUpdate.WaitForLastPresentationAndUpdateTime));
-
-        Debug.Log(Application.persistentDataPath);
-        PlayerLoopInjector.OutputCurrentStateToFile();
+        PlayerLoopInjector.InsertSystemAfter(playerLoopSystem, typeof(UnityEngine.PlayerLoop.TimeUpdate.WaitForLastPresentationAndUpdateTime));
     }
 
     private static void UpdateInjected()
@@ -60,11 +51,6 @@ public class PhysicsBodyUpdateSystem
             m_timer -= TimeStep;
             OnMarkForUpdate?.Invoke();
         }
-    }
-
-    private static void InvokePrivate(object friend, string methodName, params object[] args)
-    {
-
     }
 
     private static PlayerLoopSystem.UpdateFunction GetSubsystemUpdateFunction(Type friend)

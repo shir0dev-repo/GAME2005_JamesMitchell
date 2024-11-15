@@ -866,8 +866,8 @@ PlayerSettings:
   apiCompatibilityLevelPerPlatform: {}
   m_RenderingPath: 1
   m_MobileRenderingPath: 1
-  metroPackageName: GAME2005_LE1_MitchellJames
-  metroPackageVersion: 
+  metroPackageName: GAME2005LE1MitchellJames
+  metroPackageVersion: 1.0.0.0
   metroCertificatePath: 
   metroCertificatePassword: 
   metroCertificateSubject: 
@@ -875,7 +875,7 @@ PlayerSettings:
   metroCertificateNotAfter: 0000000000000000
   metroApplicationDescription: GAME2005_LE1_MitchellJames
   wsaImages: {}
-  metroTileShortName: 
+  metroTileShortName: GAME2005_LE1_MitchellJames
   metroTileShowName: 0
   metroMediumTileShowName: 0
   metroLargeTileShowName: 0

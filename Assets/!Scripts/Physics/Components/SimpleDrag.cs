@@ -9,6 +9,6 @@ public class SimpleDrag : PhysicsComponentBase
 
     public override Vector3 GetForce(Vector3 initial)
     {
-        return initial + PhysicsManager.Instance.Gravity / m_coefficient * PhysicsBodyUpdateSystem.TimeStep;
+        return -m_coefficient * initial;
     }
 }

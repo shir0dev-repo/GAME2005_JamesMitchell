@@ -17,11 +17,6 @@ public class SphereCollisionComponent : CollisionComponent
     /// <summary>Used for debugging the CSA and drawing it with gizmos.</summary>
     private Vector3 m_lastKnownNormal = Vector3.zero;
 
-    private void Awake()
-    {
-        
-    }
-
     public override float CrossSectionalArea(Vector3 inNormal)
     {
         m_lastKnownNormal = inNormal.normalized;
