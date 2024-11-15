@@ -1,23 +1,30 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using UnityEngine;
 
 public class PartitionedSpace<T> where T : IPartitionable
 {
-    private Dictionary<Vector3Int, Partition<T>> m_loadedPartitions;
     public Dictionary<Vector3Int, Partition<T>> Partitions => m_loadedPartitions;
+    private Dictionary<Vector3Int, Partition<T>> m_loadedPartitions;
     
-    private Vector3Int m_chunkSize;
     public Vector3Int ChunkSize => m_chunkSize;
-    private Action<Partition<T>> m_partitionProcess;
+    private Vector3Int m_chunkSize;
+
+    public delegate void PartitionProcess(Partition<T> part);
+    private PartitionProcess m_partitionProcess;
+
     public PartitionedSpace(Vector3Int chunkSize)
     {
         m_chunkSize = chunkSize;
         m_loadedPartitions = new();
+    }
+
+    public PartitionedSpace(Vector3Int chunkSize, PartitionProcess perChunkCalculation)
+    {
+        m_chunkSize = chunkSize;
+        m_loadedPartitions = new();
+        m_partitionProcess = perChunkCalculation;
     }
 
     public void UpdatePartitions()
@@ -55,9 +62,9 @@ public class PartitionedSpace<T> where T : IPartitionable
         }
     }
 
-    public void SetPerChunkCalculation(Action<Partition<T>> chunkAction)
+    public void SetPerChunkCalculation(PartitionProcess chunkAction)
     {
-        m_partitionProcess = chunkAction;
+        m_partitionProcess = chunkAction as PartitionProcess;
     }
 
     public void AssignPartition(T obj)
@@ -78,7 +85,7 @@ public class PartitionedSpace<T> where T : IPartitionable
 
         m_loadedPartitions[tuple.pos].Add(tuple.obj);
     }
-    private Vector3Int GetKey(Vector3 position)
+    public Vector3Int GetKey(Vector3 position)
     {
         return Vector3Int.Scale(DivideAndFloor(position, m_chunkSize), m_chunkSize);
     }

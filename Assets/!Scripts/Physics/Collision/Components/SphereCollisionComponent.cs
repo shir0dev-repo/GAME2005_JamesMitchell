@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[UnityEditor.CanEditMultipleObjects]
 public class SphereCollisionComponent : CollisionComponent
 {
     public override ColliderType Type => ColliderType.Sphere;
@@ -16,10 +17,21 @@ public class SphereCollisionComponent : CollisionComponent
     /// <summary>Used for debugging the CSA and drawing it with gizmos.</summary>
     private Vector3 m_lastKnownNormal = Vector3.zero;
 
+    private void Awake()
+    {
+        
+    }
+
     public override float CrossSectionalArea(Vector3 inNormal)
     {
         m_lastKnownNormal = inNormal.normalized;
         return Mathf.PI * Mathf.Pow(m_radius, 2);
+    }
+
+    [ContextMenu("Update Radius")]
+    public void UpdateRadius()
+    {
+        transform.localScale = Vector3.one * m_radius * 2f;
     }
 
     private void OnDrawGizmos()

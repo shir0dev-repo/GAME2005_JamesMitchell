@@ -21,6 +21,11 @@ public abstract class CollisionComponent : MonoBehaviour, ICollisionVolume, IPhy
 
     public abstract float CrossSectionalArea(Vector3 normal);
 
+    public virtual void Start()
+    {
+        CollisionManager.AddToSimulation(this);
+    }
+
     public Vector3 ResolveCollisions(ref Vector3 resultantVelocity)
     {
         if (!IsKinematic) CurrentCollisions.Clear();
@@ -46,5 +51,10 @@ public abstract class CollisionComponent : MonoBehaviour, ICollisionVolume, IPhy
             ICollisionVolume collision = CurrentCollisions.Pop();
             transform.position += (this as ICollisionVolume).GetCollisionResponse(ref resultantVelocity, collision);
         }
+    }
+
+    private void OnDestroy()
+    {
+        CollisionManager.RemoveFromSimulation(this);
     }
 }

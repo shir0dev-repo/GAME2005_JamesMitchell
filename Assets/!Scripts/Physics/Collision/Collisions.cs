@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
+using static UnityEngine.ParticleSystem;
 
 public enum ColliderType
 {
@@ -24,7 +26,8 @@ public static class Collisions
 
     static Collisions()
     {
-        _COL_BIT_MASK = new Dictionary<ColliderType, int>()
+        _COL_BIT_MASK =
+        new Dictionary<ColliderType, int>()
         {
             { ColliderType.Sphere, 1 },
             { ColliderType.Plane, 2 },
@@ -45,6 +48,9 @@ public static class Collisions
             Interactions[i] = new Func<ICollisionVolume, ICollisionVolume, bool>[length - i];
         }
 
+        StringBuilder sb = new StringBuilder();
+        int warningCount = 0;
+
         // initialize methods for each collision response.
         // this can be thought of as half of a matrix, or a triangular array.
         // the choice of this implementation allows collision interactions to only be defined once.
@@ -53,8 +59,34 @@ public static class Collisions
         {
             for (int k = 0; k < Interactions[i].Length; k++)
             {
-                Interactions[i][k] = GetCollisionCheck((ColliderType)i, (ColliderType)(i + k));
+                ColliderType ctI = (ColliderType)i;
+                ColliderType ctIK = (ColliderType)(i + k);
+
+                Interactions[i][k] = GetCollisionCheck(ctI, ctIK, ref warningCount);
+                if (warningCount > 0)
+                {
+                    if (warningCount == 1)
+                    {
+                        sb.AppendLine("unimplemented collision(s) detected during initialization:");
+                        sb.AppendLine();
+                    }
+                    else
+                    {
+                        sb.AppendLine(
+                            string.Format("  [WARN]: Collision between {0} and {1} is unimplemented!",
+                            ctI.ToString("f"), ctIK.ToString("f"))
+                        );
+                    }
+                }
             }
+        }
+
+        if (warningCount > 0)
+        {
+            StringBuilder final = new StringBuilder();
+            final.Append($"[WARN] {warningCount} ");
+            final.Append(sb);
+            Debug.LogWarning(final.ToString());
         }
     }
 
@@ -63,20 +95,11 @@ public static class Collisions
         int typeA = (int)a.Type;
         int typeB = (int)b.Type;
 
-        // avoid unnecessary function calls
-        if (CheckUnimplementedCollisions(typeA, typeB))
-        {
-            Debug.LogWarningFormat("[WARN]: Collision between {0} and {1} is unimplemented!",
-                a.Type.ToString("g"), b.Type.ToString("g"));
-            return false;
-        }
-
         // because interactions are implemented in a triangular manner,
         // passing in the larger value first results in an IndexOutOfRangeException.
         // e.g. If typeA is AABB (3) and typeB is Sphere (0), the definition of this collision is at 
         // Interactions[0][3]. Assuming 4 VolumeTypes, Interactions[3][0] is defined as the collision
-        // between two VolumeTypes, both of type 4.
-        Debug.Log($"typeB: {typeB} typeA: {typeA}");
+        // between two VolumeTypes, both of type 4.        
         if (typeB < typeA)
         {
             return Interactions[typeB][typeA - typeB].Invoke(b, a);
@@ -97,13 +120,11 @@ public static class Collisions
     // methods are separated into a declaration/implementation style
     // to make casting easier. Child-specific parameters such as a sphere's radius or a plane's normal
     // cannot be obtained without downcasting, which cannot be implicit.
-    private static Func<ICollisionVolume, ICollisionVolume, bool> GetCollisionCheck(ColliderType first, ColliderType second)
+    private static Func<ICollisionVolume, ICollisionVolume, bool> GetCollisionCheck(ColliderType first, ColliderType second, ref int warningCount)
     {
-        // first == ColliderType.AABB || second == ColliderType.AABB
         if (CheckUnimplementedCollisions(first, second))
         {
-            Debug.LogWarningFormat("[WARN]: Collision between {0} and {1} is unimplemented!",
-                first.ToString("g"), second.ToString("g"));
+            warningCount += 1;
 
             // fill in unimplemented collision response with dummy function 
             return (_, _) => false;
@@ -135,7 +156,7 @@ public static class Collisions
                 return IsAABBAABBCollliding;
 
             default:
-                throw new UnimplementedCollisionException("Collision may be implemented, try switching the order.");
+                return (_, _) => false;
         }
     }
 
@@ -284,8 +305,6 @@ public static class Collisions
             float mag = velocity.magnitude;
             velocity = Vector3.Reflect(velocity.normalized, collisionPlaneNormal) * mag;
         }
-
-        Debug.Log("SS collision");
 
         if (a.IsKinematic == false)
             return Vector3.zero;

@@ -1,0 +1,1292 @@
+Systems
+=====
+  SystemType: TimeUpdate
+  Delegate: 
+  Update Function: 0
+  Loop Condition Function: 0
+  1 subsystems
+  SystemType: WaitForLastPresentationAndUpdateTime
+  SystemType: WaitForLastPresentationAndUpdateTime
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638274448
+  Update Function: 140696638274448
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: Initialization
+  Delegate: 
+  Update Function: 0
+  Loop Condition Function: 0
+  7 subsystems
+  SystemType: ProfilerStartFrame
+  SystemType: ProfilerStartFrame
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638274456
+  Update Function: 140696638274456
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: UpdateCameraMotionVectors
+  SystemType: UpdateCameraMotionVectors
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638274464
+  Update Function: 140696638274464
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: DirectorSampleTime
+  SystemType: DirectorSampleTime
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638274472
+  Update Function: 140696638274472
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: AsyncUploadTimeSlicedUpdate
+  SystemType: AsyncUploadTimeSlicedUpdate
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638274480
+  Update Function: 140696638274480
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: SynchronizeInputs
+  SystemType: SynchronizeInputs
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638274488
+  Update Function: 140696638274488
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: SynchronizeState
+  SystemType: SynchronizeState
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638274496
+  Update Function: 140696638274496
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: XREarlyUpdate
+  SystemType: XREarlyUpdate
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638274504
+  Update Function: 140696638274504
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: EarlyUpdate
+  Delegate: 
+  Update Function: 0
+  Loop Condition Function: 0
+  32 subsystems
+  SystemType: PollPlayerConnection
+  SystemType: PollPlayerConnection
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638274512
+  Update Function: 140696638274512
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: GpuTimestamp
+  SystemType: GpuTimestamp
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638274520
+  Update Function: 140696638274520
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: AnalyticsCoreStatsUpdate
+  SystemType: AnalyticsCoreStatsUpdate
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638274528
+  Update Function: 140696638274528
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: UnityWebRequestUpdate
+  SystemType: UnityWebRequestUpdate
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638274536
+  Update Function: 140696638274536
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: ExecuteMainThreadJobs
+  SystemType: ExecuteMainThreadJobs
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638274544
+  Update Function: 140696638274544
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: ProcessMouseInWindow
+  SystemType: ProcessMouseInWindow
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638274552
+  Update Function: 140696638274552
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: ClearIntermediateRenderers
+  SystemType: ClearIntermediateRenderers
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638274560
+  Update Function: 140696638274560
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: ClearLines
+  SystemType: ClearLines
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638274568
+  Update Function: 140696638274568
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: PresentBeforeUpdate
+  SystemType: PresentBeforeUpdate
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638274576
+  Update Function: 140696638274576
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: ResetFrameStatsAfterPresent
+  SystemType: ResetFrameStatsAfterPresent
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638274584
+  Update Function: 140696638274584
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: UpdateAsyncInstantiate
+  SystemType: UpdateAsyncInstantiate
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638274592
+  Update Function: 140696638274592
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: UpdateAsyncReadbackManager
+  SystemType: UpdateAsyncReadbackManager
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638274600
+  Update Function: 140696638274600
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: UpdateStreamingManager
+  SystemType: UpdateStreamingManager
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638274608
+  Update Function: 140696638274608
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: UpdateTextureStreamingManager
+  SystemType: UpdateTextureStreamingManager
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638274616
+  Update Function: 140696638274616
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: UpdatePreloading
+  SystemType: UpdatePreloading
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638274624
+  Update Function: 140696638274624
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: UpdateContentLoading
+  SystemType: UpdateContentLoading
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638274632
+  Update Function: 140696638274632
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: RendererNotifyInvisible
+  SystemType: RendererNotifyInvisible
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638274640
+  Update Function: 140696638274640
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: PlayerCleanupCachedData
+  SystemType: PlayerCleanupCachedData
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638274648
+  Update Function: 140696638274648
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: UpdateMainGameViewRect
+  SystemType: UpdateMainGameViewRect
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638274656
+  Update Function: 140696638274656
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: UpdateCanvasRectTransform
+  SystemType: UpdateCanvasRectTransform
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638274664
+  Update Function: 140696638274664
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: XRUpdate
+  SystemType: XRUpdate
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638274672
+  Update Function: 140696638274672
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: UpdateInputManager
+  SystemType: UpdateInputManager
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638274680
+  Update Function: 140696638274680
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: ProcessRemoteInput
+  SystemType: ProcessRemoteInput
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638274688
+  Update Function: 140696638274688
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: ScriptRunDelayedStartupFrame
+  SystemType: ScriptRunDelayedStartupFrame
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638274696
+  Update Function: 140696638274696
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: UpdateKinect
+  SystemType: UpdateKinect
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638274704
+  Update Function: 140696638274704
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: DeliverIosPlatformEvents
+  SystemType: DeliverIosPlatformEvents
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638274712
+  Update Function: 140696638274712
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: ARCoreUpdate
+  SystemType: ARCoreUpdate
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638274720
+  Update Function: 140696638274720
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: DispatchEventQueueEvents
+  SystemType: DispatchEventQueueEvents
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638274728
+  Update Function: 140696638274728
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: Physics2DEarlyUpdate
+  SystemType: Physics2DEarlyUpdate
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638274736
+  Update Function: 140696638274736
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: PhysicsResetInterpolatedTransformPosition
+  SystemType: PhysicsResetInterpolatedTransformPosition
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638274744
+  Update Function: 140696638274744
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: SpriteAtlasManagerUpdate
+  SystemType: SpriteAtlasManagerUpdate
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638274752
+  Update Function: 140696638274752
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: PerformanceAnalyticsUpdate
+  SystemType: PerformanceAnalyticsUpdate
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638274760
+  Update Function: 140696638274760
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: FixedUpdate
+  Delegate: 
+  Update Function: 0
+  Loop Condition Function: 140696581812944
+  13 subsystems
+  SystemType: ClearLines
+  SystemType: ClearLines
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638274768
+  Update Function: 140696638274768
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: NewInputFixedUpdate
+  SystemType: NewInputFixedUpdate
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638274776
+  Update Function: 140696638274776
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: DirectorFixedSampleTime
+  SystemType: DirectorFixedSampleTime
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638274784
+  Update Function: 140696638274784
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: AudioFixedUpdate
+  SystemType: AudioFixedUpdate
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638274792
+  Update Function: 140696638274792
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: ScriptRunBehaviourFixedUpdate
+  SystemType: ScriptRunBehaviourFixedUpdate
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638274800
+  Update Function: 140696638274800
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: DirectorFixedUpdate
+  SystemType: DirectorFixedUpdate
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638274808
+  Update Function: 140696638274808
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: LegacyFixedAnimationUpdate
+  SystemType: LegacyFixedAnimationUpdate
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638274816
+  Update Function: 140696638274816
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: XRFixedUpdate
+  SystemType: XRFixedUpdate
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638274824
+  Update Function: 140696638274824
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: PhysicsFixedUpdate
+  SystemType: PhysicsFixedUpdate
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638274832
+  Update Function: 140696638274832
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: Physics2DFixedUpdate
+  SystemType: Physics2DFixedUpdate
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638274840
+  Update Function: 140696638274840
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: PhysicsClothFixedUpdate
+  SystemType: PhysicsClothFixedUpdate
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638274848
+  Update Function: 140696638274848
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: DirectorFixedUpdatePostPhysics
+  SystemType: DirectorFixedUpdatePostPhysics
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638274856
+  Update Function: 140696638274856
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: ScriptRunDelayedFixedFrameRate
+  SystemType: ScriptRunDelayedFixedFrameRate
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638274864
+  Update Function: 140696638274864
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: PreUpdate
+  Delegate: 
+  Update Function: 0
+  Loop Condition Function: 0
+  10 subsystems
+  SystemType: PhysicsUpdate
+  SystemType: PhysicsUpdate
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638274872
+  Update Function: 140696638274872
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: Physics2DUpdate
+  SystemType: Physics2DUpdate
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638274880
+  Update Function: 140696638274880
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: PhysicsClothUpdate
+  SystemType: PhysicsClothUpdate
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638274888
+  Update Function: 140696638274888
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: CheckTexFieldInput
+  SystemType: CheckTexFieldInput
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638274896
+  Update Function: 140696638274896
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: IMGUISendQueuedEvents
+  SystemType: IMGUISendQueuedEvents
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638274904
+  Update Function: 140696638274904
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: NewInputUpdate
+  SystemType: NewInputUpdate
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638274912
+  Update Function: 140696638274912
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: SendMouseEvents
+  SystemType: SendMouseEvents
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638274920
+  Update Function: 140696638274920
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: AIUpdate
+  SystemType: AIUpdate
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638274928
+  Update Function: 140696638274928
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: WindUpdate
+  SystemType: WindUpdate
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638274936
+  Update Function: 140696638274936
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: UpdateVideo
+  SystemType: UpdateVideo
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638274944
+  Update Function: 140696638274944
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: Update
+  Delegate: 
+  Update Function: 0
+  Loop Condition Function: 0
+  5 subsystems
+  SystemType: PhysicsUpdateSystem
+  SystemType: PhysicsUpdateSystem
+  Delegate: UnityEngine.LowLevel.PlayerLoopSystem+UpdateFunction
+  Delegate: UnityEngine.LowLevel.PlayerLoopSystem+UpdateFunction
+  Update Function: 0
+  Update Function: 0
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: ScriptRunBehaviourUpdate
+  SystemType: ScriptRunBehaviourUpdate
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638274952
+  Update Function: 140696638274952
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: ScriptRunDelayedDynamicFrameRate
+  SystemType: ScriptRunDelayedDynamicFrameRate
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638274960
+  Update Function: 140696638274960
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: ScriptRunDelayedTasks
+  SystemType: ScriptRunDelayedTasks
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638274968
+  Update Function: 140696638274968
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: DirectorUpdate
+  SystemType: DirectorUpdate
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638274976
+  Update Function: 140696638274976
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: PreLateUpdate
+  Delegate: 
+  Update Function: 0
+  Loop Condition Function: 0
+  12 subsystems
+  SystemType: AIUpdatePostScript
+  SystemType: AIUpdatePostScript
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638274984
+  Update Function: 140696638274984
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: DirectorUpdateAnimationBegin
+  SystemType: DirectorUpdateAnimationBegin
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638274992
+  Update Function: 140696638274992
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: LegacyAnimationUpdate
+  SystemType: LegacyAnimationUpdate
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638275000
+  Update Function: 140696638275000
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: DirectorUpdateAnimationEnd
+  SystemType: DirectorUpdateAnimationEnd
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638275008
+  Update Function: 140696638275008
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: DirectorDeferredEvaluate
+  SystemType: DirectorDeferredEvaluate
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638275016
+  Update Function: 140696638275016
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: UIElementsUpdatePanels
+  SystemType: UIElementsUpdatePanels
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638275024
+  Update Function: 140696638275024
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: EndGraphicsJobsAfterScriptUpdate
+  SystemType: EndGraphicsJobsAfterScriptUpdate
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638275032
+  Update Function: 140696638275032
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: ConstraintManagerUpdate
+  SystemType: ConstraintManagerUpdate
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638275040
+  Update Function: 140696638275040
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: ParticleSystemBeginUpdateAll
+  SystemType: ParticleSystemBeginUpdateAll
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638275048
+  Update Function: 140696638275048
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: Physics2DLateUpdate
+  SystemType: Physics2DLateUpdate
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638275056
+  Update Function: 140696638275056
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: PhysicsLateUpdate
+  SystemType: PhysicsLateUpdate
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638275064
+  Update Function: 140696638275064
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: ScriptRunBehaviourLateUpdate
+  SystemType: ScriptRunBehaviourLateUpdate
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638275072
+  Update Function: 140696638275072
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: PostLateUpdate
+  Delegate: 
+  Update Function: 0
+  Loop Condition Function: 0
+  45 subsystems
+  SystemType: PlayerSendFrameStarted
+  SystemType: PlayerSendFrameStarted
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638275080
+  Update Function: 140696638275080
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: DirectorLateUpdate
+  SystemType: DirectorLateUpdate
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638275088
+  Update Function: 140696638275088
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: ScriptRunDelayedDynamicFrameRate
+  SystemType: ScriptRunDelayedDynamicFrameRate
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638275096
+  Update Function: 140696638275096
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: PhysicsSkinnedClothBeginUpdate
+  SystemType: PhysicsSkinnedClothBeginUpdate
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638275104
+  Update Function: 140696638275104
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: UpdateRectTransform
+  SystemType: UpdateRectTransform
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638275112
+  Update Function: 140696638275112
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: PlayerUpdateCanvases
+  SystemType: PlayerUpdateCanvases
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638275120
+  Update Function: 140696638275120
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: UpdateAudio
+  SystemType: UpdateAudio
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638275128
+  Update Function: 140696638275128
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: VFXUpdate
+  SystemType: VFXUpdate
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638275136
+  Update Function: 140696638275136
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: ParticleSystemEndUpdateAll
+  SystemType: ParticleSystemEndUpdateAll
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638275144
+  Update Function: 140696638275144
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: EndGraphicsJobsAfterScriptLateUpdate
+  SystemType: EndGraphicsJobsAfterScriptLateUpdate
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638275152
+  Update Function: 140696638275152
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: UpdateCustomRenderTextures
+  SystemType: UpdateCustomRenderTextures
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638275160
+  Update Function: 140696638275160
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: XRPostLateUpdate
+  SystemType: XRPostLateUpdate
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638275168
+  Update Function: 140696638275168
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: UpdateAllRenderers
+  SystemType: UpdateAllRenderers
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638275176
+  Update Function: 140696638275176
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: UpdateLightProbeProxyVolumes
+  SystemType: UpdateLightProbeProxyVolumes
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638275184
+  Update Function: 140696638275184
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: EnlightenRuntimeUpdate
+  SystemType: EnlightenRuntimeUpdate
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638275192
+  Update Function: 140696638275192
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: UpdateAllSkinnedMeshes
+  SystemType: UpdateAllSkinnedMeshes
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638275200
+  Update Function: 140696638275200
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: ProcessWebSendMessages
+  SystemType: ProcessWebSendMessages
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638275208
+  Update Function: 140696638275208
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: SortingGroupsUpdate
+  SystemType: SortingGroupsUpdate
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638275216
+  Update Function: 140696638275216
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: UpdateVideoTextures
+  SystemType: UpdateVideoTextures
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638275224
+  Update Function: 140696638275224
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: UpdateVideo
+  SystemType: UpdateVideo
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638275232
+  Update Function: 140696638275232
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: DirectorRenderImage
+  SystemType: DirectorRenderImage
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638275240
+  Update Function: 140696638275240
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: PlayerEmitCanvasGeometry
+  SystemType: PlayerEmitCanvasGeometry
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638275248
+  Update Function: 140696638275248
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: PlayerRenderUIEBatchModeOffscreen
+  SystemType: PlayerRenderUIEBatchModeOffscreen
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638275256
+  Update Function: 140696638275256
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: PhysicsSkinnedClothFinishUpdate
+  SystemType: PhysicsSkinnedClothFinishUpdate
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638275264
+  Update Function: 140696638275264
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: FinishFrameRendering
+  SystemType: FinishFrameRendering
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638275272
+  Update Function: 140696638275272
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: BatchModeUpdate
+  SystemType: BatchModeUpdate
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638275280
+  Update Function: 140696638275280
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: PlayerSendFrameComplete
+  SystemType: PlayerSendFrameComplete
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638275288
+  Update Function: 140696638275288
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: UpdateCaptureScreenshot
+  SystemType: UpdateCaptureScreenshot
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638275296
+  Update Function: 140696638275296
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: PresentAfterDraw
+  SystemType: PresentAfterDraw
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638275304
+  Update Function: 140696638275304
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: ClearImmediateRenderers
+  SystemType: ClearImmediateRenderers
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638275312
+  Update Function: 140696638275312
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: PlayerSendFramePostPresent
+  SystemType: PlayerSendFramePostPresent
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638275320
+  Update Function: 140696638275320
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: UpdateResolution
+  SystemType: UpdateResolution
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638275328
+  Update Function: 140696638275328
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: InputEndFrame
+  SystemType: InputEndFrame
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638275336
+  Update Function: 140696638275336
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: TriggerEndOfFrameCallbacks
+  SystemType: TriggerEndOfFrameCallbacks
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638275344
+  Update Function: 140696638275344
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: GUIClearEvents
+  SystemType: GUIClearEvents
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638275352
+  Update Function: 140696638275352
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: ShaderHandleErrors
+  SystemType: ShaderHandleErrors
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638275360
+  Update Function: 140696638275360
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: ResetInputAxis
+  SystemType: ResetInputAxis
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638275368
+  Update Function: 140696638275368
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: ThreadedLoadingDebug
+  SystemType: ThreadedLoadingDebug
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638275376
+  Update Function: 140696638275376
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: ProfilerSynchronizeStats
+  SystemType: ProfilerSynchronizeStats
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638275384
+  Update Function: 140696638275384
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: MemoryFrameMaintenance
+  SystemType: MemoryFrameMaintenance
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638275392
+  Update Function: 140696638275392
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: ExecuteGameCenterCallbacks
+  SystemType: ExecuteGameCenterCallbacks
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638275400
+  Update Function: 140696638275400
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: XRPreEndFrame
+  SystemType: XRPreEndFrame
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638275408
+  Update Function: 140696638275408
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: ProfilerEndFrame
+  SystemType: ProfilerEndFrame
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638275416
+  Update Function: 140696638275416
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: GraphicsWarmupPreloadedShaders
+  SystemType: GraphicsWarmupPreloadedShaders
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638275424
+  Update Function: 140696638275424
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems
+  SystemType: ObjectDispatcherPostLateUpdate
+  SystemType: ObjectDispatcherPostLateUpdate
+  Delegate: 
+  Delegate: 
+  Update Function: 140696638275432
+  Update Function: 140696638275432
+  Loop Condition Function: 0
+  Loop Condition Function: 0
+  0 subsystems
+  0 subsystems

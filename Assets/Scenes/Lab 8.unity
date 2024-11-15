@@ -170,15 +170,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 89a0dba6051e8a840acf18037ca61336, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_simulationMode: 0
+  m_simulationMode: 1
   m_mass: 1
-  m_dragCoefficient: 0.39
+  m_dragCoefficient: 1.5
   m_velocity: {x: 0, y: 0, z: 0}
   physicsComponents:
   - {fileID: 251383420}
-  - {fileID: 251383425}
-  m_velocityLine:
-    m_productionState: []
 --- !u!23 &251383422
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -265,16 +262,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 251383419}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7e930d0732abdad439df861fc7265a05, type: 3}
+  m_Script: {fileID: 11500000, guid: 7e5c4ded9f5e58c4fb337fb8533023ec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_body: {fileID: 0}
-  m_radius: 0.5
   m_isKinematic: 1
   m_velocityMode: 0
-  <CurrentlyColliding>k__BackingField: 0
-  <CurrentPartitionOrigin>k__BackingField: {x: 0, y: 0, z: 0}
-  m_lastKnownNormal: {x: 0, y: 0, z: 0}
+  m_radius: 0.5
 --- !u!1001 &376727004
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -381,8 +374,6 @@ MonoBehaviour:
   m_dragCoefficient: 1
   m_velocity: {x: 0, y: 0, z: 0}
   physicsComponents: []
-  m_velocityLine:
-    m_productionState: []
 --- !u!23 &439643047
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -707,8 +698,6 @@ MonoBehaviour:
   m_dragCoefficient: 1
   m_velocity: {x: 0, y: 0, z: 0}
   physicsComponents: []
-  m_velocityLine:
-    m_productionState: []
 --- !u!23 &1568533866
 MeshRenderer:
   m_ObjectHideFlags: 0

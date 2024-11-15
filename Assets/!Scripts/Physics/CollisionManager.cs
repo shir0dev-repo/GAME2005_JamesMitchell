@@ -3,49 +3,74 @@ using UnityEngine;
 
 public class CollisionManager : Singleton<CollisionManager>
 {
-    private PartitionedSpace<ICollisionVolume> m_space;
+    private static void MarkForUpdate() => m_shouldUpdate = true;
+    private static bool m_shouldUpdate = false;
+    private static PartitionedSpace<ICollisionVolume> m_space;
     [SerializeField] private Vector3Int m_chunkSize = Vector3Int.one * 16;
 
-    private List<ICollisionVolume> m_planesAndHalfspaces = new();
+    private static readonly List<ICollisionVolume> m_planesAndHalfspaces = new();
+    private static readonly List<ICollisionVolume> m_currentlySimulatedColliders = new();
+
+    [SerializeField] private bool m_drawChunks = false;
+
+    private static void CollisionManagerUpdateInjected()
+    {
+        if (m_shouldUpdate)
+        {
+            m_shouldUpdate = false;
+            m_space.UpdatePartitions();
+        }
+    }
 
     protected override void Awake()
     {
         base.Awake();
-        m_space = new PartitionedSpace<ICollisionVolume>(m_chunkSize);
-        m_space.SetPerChunkCalculation(CalculateCollisionsPerChunk);
+        m_space = new PartitionedSpace<ICollisionVolume>(m_chunkSize, CalculateCollisionsPerChunk);
     }
 
-    private void OnEnable()
+    private void Start()
     {
-        PhysicsManager.OnPhysicsUpdate += CheckCollisions;
-        PhysicsManager.OnObjectAdded += TryIncludeInCollisions;
+        PhysicsBodyUpdateSystem.OnMarkForUpdate += MarkForUpdate;
     }
 
-    private void TryIncludeInCollisions(object physicsManager, PhysicsBody body)
+    public static void AddToSimulation(CollisionComponent collider)
     {
-        if (body.TryGetComponent(out ICollisionVolume cv))
+
+        if (collider is PlaneCollisionComponent or HalfspaceCollisionComponent)
         {
-            if (cv is PlaneCollisionComponent or HalfspaceCollisionComponent)
+            if (!m_planesAndHalfspaces.Contains(collider))
             {
-                m_planesAndHalfspaces.Add(cv);
-                Debug.Log("added one");
+                m_planesAndHalfspaces.Add(collider);
             }
-            else
+        }
+        else
+        {
+            if (!m_currentlySimulatedColliders.Contains(collider))
             {
-                m_space.AssignPartition(cv);
+                m_currentlySimulatedColliders.Add(collider);
+                m_space.AssignPartition(collider);
             }
         }
     }
 
-    private void OnDisable()
+    //TODO:
+    // implement way to remove objects from PartitionedSpace<T>
+    public static void RemoveFromSimulation(CollisionComponent collider)
     {
-        PhysicsManager.OnPhysicsUpdate -= CheckCollisions;
-        PhysicsManager.OnObjectAdded -= TryIncludeInCollisions;
-    }
-
-    private void CheckCollisions(object physicsManager, float dt)
-    {
-        m_space.UpdatePartitions();
+        if (collider is PlaneCollisionComponent or HalfspaceCollisionComponent)
+        {
+            m_planesAndHalfspaces.Remove(collider);
+        }
+        else
+        {
+            m_currentlySimulatedColliders.Remove(collider);
+            Vector3Int key = m_space.GetKey(collider.transform.position);
+            if (m_space.Partitions.ContainsKey(key))
+            {
+                Partition<ICollisionVolume> currentSpace = m_space.Partitions[m_space.GetKey(collider.transform.position)];
+                currentSpace.Remove(collider);
+            }
+        }
     }
 
     private void CalculateCollisionsPerChunk(Partition<ICollisionVolume> chunk)
@@ -56,7 +81,7 @@ public class CollisionManager : Singleton<CollisionManager>
         for (int i = 0; i < chunk.Objects.Count; i++)
         {
             current = chunk.Objects[i];
-            
+
             foreach (var planarVolume in m_planesAndHalfspaces)
             {
                 compare = planarVolume;
@@ -70,7 +95,7 @@ public class CollisionManager : Singleton<CollisionManager>
             for (int j = 0; j < chunk.Objects.Count; j++)
             {
                 if (i == j) continue;
-                
+
                 compare = chunk.Objects[j];
 
                 bool collisionOccurred = current.IsColliding(compare);
@@ -85,9 +110,15 @@ public class CollisionManager : Singleton<CollisionManager>
         }
     }
 
+    protected override void OnApplicationQuit()    
+    {
+        PhysicsBodyUpdateSystem.OnMarkForUpdate -= MarkForUpdate;
+        base.OnApplicationQuit();
+    }
+
     public void OnDrawGizmos()
     {
-        if (!Application.isPlaying) return;
+        if (!Application.isPlaying || !m_drawChunks) return;
         Gizmos.color = new Color(0, 1, 0, 0.4f);
 
         foreach (var partition in m_space.Partitions)

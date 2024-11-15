@@ -10,19 +10,20 @@ public class PhysicsBody : MonoBehaviour
     [SerializeField] private SimulationMode m_simulationMode = SimulationMode.Kinematic;
 
     public float Mass => m_mass;
-    [SerializeField, Range(0.5f, 1000f)] protected float m_mass = 1f;
-
-    public float Drag => m_dragCoefficient;
-    [SerializeField, Range(0.01f, 1.5f)] protected float m_dragCoefficient = 1f;
+    [SerializeField, Min(0.5f)] protected float m_mass = 1f;
 
     [SerializeField, ReadOnly] protected Vector3 m_velocity = Vector3.zero;
-    [SerializeField] protected PhysicsComponentBase[] physicsComponents;
+    [SerializeField, ReadOnly] protected PhysicsComponentBase[] physicsComponents;
     
     private CollisionComponent m_collisionComponent;
     private bool m_collisionsEnabled = false;
 
+    private Vector3 m_velocityLastFrame = Vector3.zero;
+
     private void Awake()
     {
+        physicsComponents = GetComponents<PhysicsComponentBase>();
+
         m_collisionsEnabled = TryGetComponent(out m_collisionComponent);
     }
 
@@ -35,6 +36,8 @@ public class PhysicsBody : MonoBehaviour
     {
         if (m_simulationMode == SimulationMode.Static) return;
 
+        m_velocityLastFrame = m_velocity;
+
         if (m_collisionsEnabled)
             m_collisionComponent.ResolveCollisionsDirect(ref m_velocity);
 
@@ -43,14 +46,23 @@ public class PhysicsBody : MonoBehaviour
         {
             netForce += physicsComponent.GetForce(m_velocity);
         }
-
-        m_velocity += netForce / m_mass * PhysicsManager.Instance.DeltaTime;
+        
+        
+        m_velocity += netForce / m_mass * PhysicsBodyUpdateSystem.TimeStep;
 
         transform.position += m_velocity;
     }
 
     public void OverrideVelocity(Vector3 velocity) => m_velocity = velocity;
     
+    private static bool IsFiniteVector(Vector3 v)
+    {
+        return
+            !float.IsNaN(v.x) && !float.IsInfinity(v.x) &&
+            !float.IsNaN(v.y) && !float.IsInfinity(v.y) &&
+            !float.IsNaN(v.z) && !float.IsInfinity(v.z);
+    }
+
     protected virtual void OnDestroy()
     {
         PhysicsManager.RemoveFromLoop(this);
