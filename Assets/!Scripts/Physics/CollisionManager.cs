@@ -1,31 +1,34 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class CollisionManager : Singleton<CollisionManager>
 {
     private static void MarkForUpdate() => m_shouldUpdate = true;
     private static bool m_shouldUpdate = false;
-    private static PartitionedSpace<ICollisionVolume> m_space;
+    private static PartitionedSpace<CollisionComponent> m_space;
     [SerializeField] private Vector3Int m_chunkSize = Vector3Int.one * 16;
 
-    private static readonly List<ICollisionVolume> m_planesAndHalfspaces = new();
-    private static readonly List<ICollisionVolume> m_currentlySimulatedColliders = new();
+    private static readonly List<CollisionComponent> m_planesAndHalfspaces = new();
+    private static readonly List<CollisionComponent> m_currentlySimulatedColliders = new();
 
     [SerializeField] private bool m_drawChunks = false;
-
+    public static Action OnCollisionChecked;
     private static void CollisionManagerUpdateInjected()
     {
         if (m_shouldUpdate)
         {
             m_shouldUpdate = false;
             m_space.UpdatePartitions();
+            OnCollisionChecked?.Invoke();
         }
     }
 
     protected override void Awake()
     {
         base.Awake();
-        m_space = new PartitionedSpace<ICollisionVolume>(m_chunkSize, CalculateCollisionsPerChunk);
+        m_space = new PartitionedSpace<CollisionComponent>(m_chunkSize, CalculateCollisionsPerChunk);
     }
 
     private void Start()
@@ -59,16 +62,16 @@ public class CollisionManager : Singleton<CollisionManager>
             Vector3Int key = m_space.GetKey(collider.transform.position);
             if (m_space.Partitions.ContainsKey(key))
             {
-                Partition<ICollisionVolume> currentSpace = m_space.Partitions[m_space.GetKey(collider.transform.position)];
+                Partition<CollisionComponent> currentSpace = m_space.Partitions[m_space.GetKey(collider.transform.position)];
                 currentSpace.Remove(collider);
             }
         }
     }
 
-    private void CalculateCollisionsPerChunk(Partition<ICollisionVolume> chunk)
+    private void CalculateCollisionsPerChunk(Partition<CollisionComponent> chunk)
     {
-        ICollisionVolume current;
-        ICollisionVolume compare;
+        CollisionComponent current;
+        CollisionComponent compare;
 
         for (int i = 0; i < chunk.Objects.Count; i++)
         {
@@ -76,12 +79,31 @@ public class CollisionManager : Singleton<CollisionManager>
 
             foreach (var planarVolume in m_planesAndHalfspaces)
             {
-                compare = planarVolume;
-                bool collisionOccurred = compare.IsColliding(current);
-                if (collisionOccurred)
+                CollisionData collisionData = current.CurrentCollisions.Find(d => d.Other.GetInstanceID() == planarVolume.GetInstanceID());
+                int existingIndex;
+                if (collisionData == null)
+                {
+                    collisionData = new();
+                    existingIndex = -1;
+                }
+                else
+                {
+                    existingIndex = current.CurrentCollisions.IndexOf(collisionData);
+                }
+
+                if ((current as ICollisionVolume).IsColliding(planarVolume, ref collisionData))
                 {
                     current.CurrentlyColliding = true;
-                    current.CurrentCollisions.Push(compare);
+
+                    if (existingIndex == -1)
+                        current.CurrentCollisions.Add(collisionData);
+                    else
+                        current.CurrentCollisions[existingIndex].Update(collisionData);
+                }
+                else
+                {
+                    if (existingIndex != -1)
+                        current.CurrentCollisions.RemoveAt(existingIndex);
                 }
             }
             for (int j = 0; j < chunk.Objects.Count; j++)
@@ -89,14 +111,22 @@ public class CollisionManager : Singleton<CollisionManager>
                 if (i == j) continue;
 
                 compare = chunk.Objects[j];
+                CollisionData collisionData = current.CurrentCollisions.Find(d => d.Other.Equals(compare));
+                int existingIndex = current.CurrentCollisions.IndexOf(collisionData);
 
-                bool collisionOccurred = current.IsColliding(compare);
-                if (collisionOccurred)
+                if ((current as ICollisionVolume).IsColliding(compare, ref collisionData))
                 {
                     current.CurrentlyColliding = true;
-                    current.CurrentCollisions.Push(compare);
-                    compare.CurrentlyColliding = true;
-                    compare.CurrentCollisions.Push(current);
+                    
+                    if (existingIndex == -1)
+                        current.CurrentCollisions.Add(collisionData);
+                    else
+                        current.CurrentCollisions[existingIndex].Update(collisionData);
+                }
+                else
+                {
+                    if (existingIndex != -1)
+                        current.CurrentCollisions.RemoveAt(existingIndex);                    
                 }
             }
         }

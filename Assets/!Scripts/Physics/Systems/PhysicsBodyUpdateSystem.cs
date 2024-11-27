@@ -25,18 +25,19 @@ public class PhysicsBodyUpdateSystem
             updateDelegate = UpdateInjected,
             subSystemList = new PlayerLoopSystem[]
             {
-                // CollisionManagerUpdate
-                new PlayerLoopSystem
-                {
-                    type = typeof(CollisionManager),
-                    updateDelegate = GetSubsystemUpdateFunction(typeof(CollisionManager))
-                },
+                
                 // PhysicsManagerUpdate
                 new PlayerLoopSystem
                 {
                     type = typeof(PhysicsManager),
                     updateDelegate = GetSubsystemUpdateFunction(typeof(PhysicsManager))
                 },
+                // CollisionManagerUpdate
+                new PlayerLoopSystem
+                {
+                    type = typeof(CollisionManager),
+                    updateDelegate = GetSubsystemUpdateFunction(typeof(CollisionManager))
+                },                
             }
         };
 
@@ -55,6 +56,12 @@ public class PhysicsBodyUpdateSystem
 
     private static PlayerLoopSystem.UpdateFunction GetSubsystemUpdateFunction(Type friend)
     {
+        string methodName = friend.Name + "UpdateInjected";
+        return GetSubsystemUpdateFunction(friend, methodName);
+    }
+
+    private static PlayerLoopSystem.UpdateFunction GetSubsystemUpdateFunction(Type friend, string methodName)
+    {
         bool validType = false;
         foreach (Type type in m_friendsList)
         {
@@ -67,8 +74,6 @@ public class PhysicsBodyUpdateSystem
 
         if (!validType)
             throw new ArgumentException($"{friend.Name} is not allowed to be a part of the {typeof(PhysicsBodyUpdateSystem).Name}!");
-
-        string methodName = friend.Name + "UpdateInjected";
 
         MethodInfo subsystemUpdateMethod = friend.GetMethod(methodName, BindingFlags.NonPublic | BindingFlags.Static);
 

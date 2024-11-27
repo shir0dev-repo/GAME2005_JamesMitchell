@@ -7,18 +7,19 @@ public interface ICollisionVolume : IPartitionable
     ColliderType Type { get; }
     VelocityMode VelocityMode { get; }
 
+    float SkinWidth { get; }
     bool IsKinematic { get; }
     bool CurrentlyColliding { get; set; }
-    Stack<ICollisionVolume> CurrentCollisions { get; }
+    List<CollisionData> CurrentCollisions { get; }
     
-    bool IsColliding(ICollisionVolume other)
+    bool IsColliding(ICollisionVolume other, ref CollisionData colData)
     {
-        return Collisions.IsColliding(this, other);
+        return Collisions.IsColliding(this, other, ref colData);
     }
 
-    Vector3 GetCollisionResponse(ref Vector3 velocity, ICollisionVolume other)
+    Vector3 GetCollisionResponse(ref Vector3 velocity, ref Vector3 position, CollisionData colData)
     {
-        return Collisions.GetResponse(ref velocity, this, other);
+        return Collisions.GetResponse(ref velocity, ref position, this, colData);
     }
 }
 

@@ -21,8 +21,8 @@ public static class Collisions
     private static readonly Dictionary<ColliderType, int> _COL_BIT_MASK;
 
     private static readonly int _UNIMPLEMENTED_COLLISIONS;
-
-    public static Func<ICollisionVolume, ICollisionVolume, bool>[][] Interactions;
+    private delegate bool CollisionCheckDelegate(ICollisionVolume colliderA, ICollisionVolume colliderB, ref CollisionData collisionData);
+    private static CollisionCheckDelegate[][] Interactions;
 
     static Collisions()
     {
@@ -40,12 +40,12 @@ public static class Collisions
             _COL_BIT_MASK[ColliderType.AABB] |
             _COL_BIT_MASK[ColliderType.OBB];
 
-        Interactions = new Func<ICollisionVolume, ICollisionVolume, bool>[(int)ColliderType.LENGTH][];
+        Interactions = new CollisionCheckDelegate[(int)ColliderType.LENGTH][];
         int length = (int)ColliderType.LENGTH;
         // initialize array sizes. 
         for (int i = 0; i < length; i++)
         {
-            Interactions[i] = new Func<ICollisionVolume, ICollisionVolume, bool>[length - i];
+            Interactions[i] = new CollisionCheckDelegate[length - i];
         }
 
         StringBuilder sb = new StringBuilder();
@@ -90,7 +90,7 @@ public static class Collisions
         }
     }
 
-    public static bool IsColliding(ICollisionVolume a, ICollisionVolume b)
+    public static bool IsColliding(ICollisionVolume a, ICollisionVolume b, ref CollisionData colData)
     {
         int typeA = (int)a.Type;
         int typeB = (int)b.Type;
@@ -102,10 +102,10 @@ public static class Collisions
         // between two VolumeTypes, both of type 4.        
         if (typeB < typeA)
         {
-            return Interactions[typeB][typeA - typeB].Invoke(b, a);
+            return Interactions[typeB][typeA - typeB].Invoke(b, a, ref colData);
         }
         else
-            return Interactions[typeA][typeB - typeA].Invoke(a, b);
+            return Interactions[typeA][typeB - typeA].Invoke(a, b, ref colData);
     }
 
     private static bool CheckUnimplementedCollisions(int a, int b)
@@ -120,14 +120,21 @@ public static class Collisions
     // methods are separated into a declaration/implementation style
     // to make casting easier. Child-specific parameters such as a sphere's radius or a plane's normal
     // cannot be obtained without downcasting, which cannot be implicit.
-    private static Func<ICollisionVolume, ICollisionVolume, bool> GetCollisionCheck(ColliderType first, ColliderType second, ref int warningCount)
+    private static CollisionCheckDelegate GetCollisionCheck(ColliderType first, ColliderType second, ref int warningCount)
     {
+        // fill in unimplemented collision response with dummy function 
+        static bool unimplementedCollision(ICollisionVolume a, ICollisionVolume b, ref CollisionData colData)
+        {
+            return false;
+        }
+
         if (CheckUnimplementedCollisions(first, second))
         {
             warningCount += 1;
 
-            // fill in unimplemented collision response with dummy function 
-            return (_, _) => false;
+            
+
+            return unimplementedCollision;
         }
 
         switch (first, second)
@@ -156,193 +163,224 @@ public static class Collisions
                 return IsAABBAABBCollliding;
 
             default:
-                return (_, _) => false;
+                return unimplementedCollision;
         }
     }
 
     #region Sphere Checks
-    private static bool IsSphereSphereColliding(ICollisionVolume a, ICollisionVolume b)
+    private static bool IsSphereSphereColliding(ICollisionVolume a, ICollisionVolume b, ref CollisionData data)
     {
-        return IsSphereSphereColliding_Impl(a as SphereCollisionComponent, b as SphereCollisionComponent);
+        return IsSphereSphereColliding_Impl(a as SphereCollisionComponent, b as SphereCollisionComponent, ref data);
     }
-    private static bool IsSphereSphereColliding_Impl(SphereCollisionComponent a, SphereCollisionComponent b)
+    private static bool IsSphereSphereColliding_Impl(SphereCollisionComponent a, SphereCollisionComponent b, ref CollisionData data)
     {
         float distance = Vector3.Distance(a.transform.position, b.transform.position);
-        return distance <= a.Radius + b.Radius;
+        float sumRadii = a.Radius + b.Radius;
+        if (distance > sumRadii)
+        {
+            data.PenetrationDepth = 0;
+            data.CollisionNormal = Vector3.zero;
+            data.ContactPoint = Vector3.zero;
+            data.Other = null;
+            return false;
+        }
+        else
+        {
+            data.PenetrationDepth = distance - sumRadii;
+            data.CollisionNormal = (b.Center - a.Center).normalized;
+            data.ContactPoint = data.CollisionNormal * data.PenetrationDepth;
+            data.Other = b;
+            return true;
+        }
     }
 
-    private static bool IsSpherePlaneColliding(ICollisionVolume a, ICollisionVolume b)
+    private static bool IsSpherePlaneColliding(ICollisionVolume a, ICollisionVolume b, ref CollisionData data)
     {
-        return IsSpherePlaneColliding_Impl(a as SphereCollisionComponent, b as PlaneCollisionComponent);
+        return IsSpherePlaneColliding_Impl(a as SphereCollisionComponent, b as PlaneCollisionComponent, ref data);
     }
-    private static bool IsSpherePlaneColliding_Impl(SphereCollisionComponent sphere, PlaneCollisionComponent plane)
+    private static bool IsSpherePlaneColliding_Impl(SphereCollisionComponent sphere, PlaneCollisionComponent plane, ref CollisionData data)
     {
-        return plane.GetDistance(sphere.transform.position) <= sphere.Radius;
+        float distance = plane.GetDistance(sphere.transform.position);
+        if (distance > sphere.Radius)
+        {
+            return false;
+        }
+        else
+        {
+            Debug.Log("colliding!");
+            data.PenetrationDepth = sphere.Radius - distance;
+            data.CollisionNormal = plane.Axes.Normal.normalized;
+            data.ContactPoint = Vector3.ProjectOnPlane(sphere.transform.position, data.CollisionNormal);
+            data.Other = plane;
+            return true;
+        }
     }
 
-    private static bool IsSphereHalfSpaceColliding(ICollisionVolume a, ICollisionVolume b)
+    private static bool IsSphereHalfSpaceColliding(ICollisionVolume a, ICollisionVolume b, ref CollisionData data)
     {
-        return IsSphereHalfspaceColliding_Impl(a as SphereCollisionComponent, b as HalfspaceCollisionComponent);
+        return IsSphereHalfspaceColliding_Impl(a as SphereCollisionComponent, b as HalfspaceCollisionComponent, ref data);
     }
-    private static bool IsSphereHalfspaceColliding_Impl(SphereCollisionComponent sphere, HalfspaceCollisionComponent halfspace)
+    private static bool IsSphereHalfspaceColliding_Impl(SphereCollisionComponent sphere, HalfspaceCollisionComponent halfspace, ref CollisionData data)
     {
         return halfspace.GetSignedDistance(sphere.transform.position) - sphere.Radius <= 0;
     }
 
-    private static bool IsSphereAABBColliding(ICollisionVolume a, ICollisionVolume b)
+    private static bool IsSphereAABBColliding(ICollisionVolume a, ICollisionVolume b, ref CollisionData data)
     {
-        return IsSphereAABBColliding_Impl(a as SphereCollisionComponent, b as AABBCollisionComponent);
+        return IsSphereAABBColliding_Impl(a as SphereCollisionComponent, b as AABBCollisionComponent, ref data);
     }
-    private static bool IsSphereAABBColliding_Impl(SphereCollisionComponent a, AABBCollisionComponent b)
+    private static bool IsSphereAABBColliding_Impl(SphereCollisionComponent a, AABBCollisionComponent b, ref CollisionData data)
     {
         return false;
     }
     #endregion
 
     #region Plane Checks
-    private static bool IsPlanePlaneColliding(ICollisionVolume a, ICollisionVolume b)
+    private static bool IsPlanePlaneColliding(ICollisionVolume a, ICollisionVolume b, ref CollisionData data)
     {
-        return IsPlanePlaneColliding_Impl(a as PlaneCollisionComponent, b as PlaneCollisionComponent);
+        return IsPlanePlaneColliding_Impl(a as PlaneCollisionComponent, b as PlaneCollisionComponent, ref data);
     }
-    private static bool IsPlanePlaneColliding_Impl(PlaneCollisionComponent a, PlaneCollisionComponent b)
+    private static bool IsPlanePlaneColliding_Impl(PlaneCollisionComponent a, PlaneCollisionComponent b, ref CollisionData data)
     {
         return Vector3.Dot(a.Axes.Normal, b.Axes.Normal) != 1.0f;
     }
 
-    private static bool IsPlaneHalfSpaceColliding(ICollisionVolume a, ICollisionVolume b)
+    private static bool IsPlaneHalfSpaceColliding(ICollisionVolume a, ICollisionVolume b, ref CollisionData data)
     {
-        return IsPlaneHalfspaceColliding_Impl(a as PlaneCollisionComponent, b as HalfspaceCollisionComponent);
+        return IsPlaneHalfspaceColliding_Impl(a as PlaneCollisionComponent, b as HalfspaceCollisionComponent, ref data);
     }
-    private static bool IsPlaneHalfspaceColliding_Impl(PlaneCollisionComponent a, HalfspaceCollisionComponent b)
+    private static bool IsPlaneHalfspaceColliding_Impl(PlaneCollisionComponent a, HalfspaceCollisionComponent b, ref CollisionData data)
     {
         if (b.IsInsideHalfspace(a.transform.position)) return true;
         else return Vector3.Dot(a.Axes.Normal, b.Axes.Normal) != 1.0f;
     }
 
-    private static bool IsPlaneAABBColliding(ICollisionVolume a, ICollisionVolume b)
+    private static bool IsPlaneAABBColliding(ICollisionVolume a, ICollisionVolume b, ref CollisionData data)
     {
-        return IsPlaneAABBColliding_Impl(a as PlaneCollisionComponent, b as AABBCollisionComponent);
+        return IsPlaneAABBColliding_Impl(a as PlaneCollisionComponent, b as AABBCollisionComponent, ref data);
     }
-    private static bool IsPlaneAABBColliding_Impl(PlaneCollisionComponent a, AABBCollisionComponent b)
+    private static bool IsPlaneAABBColliding_Impl(PlaneCollisionComponent a, AABBCollisionComponent b, ref CollisionData data)
     {
         return false;
     }
     #endregion
 
     #region Half Space Checks
-    private static bool IsHalfSpaceHalfSpaceColliding(ICollisionVolume a, ICollisionVolume b)
+    private static bool IsHalfSpaceHalfSpaceColliding(ICollisionVolume a, ICollisionVolume b, ref CollisionData data)
     {
-        return IsHalfspaceHalfspaceColliding_Impl(a as HalfspaceCollisionComponent, b as HalfspaceCollisionComponent);
+        return IsHalfspaceHalfspaceColliding_Impl(a as HalfspaceCollisionComponent, b as HalfspaceCollisionComponent, ref data);
     }
-    private static bool IsHalfspaceHalfspaceColliding_Impl(HalfspaceCollisionComponent a, HalfspaceCollisionComponent b)
+    private static bool IsHalfspaceHalfspaceColliding_Impl(HalfspaceCollisionComponent a, HalfspaceCollisionComponent b, ref CollisionData data)
     {
         if (a.IsInsideHalfspace(b.transform.position)) return true;
         else return Vector3.Dot(a.Axes.Normal, b.Axes.Normal) != -1.0f;
     }
 
-    private static bool IsHalfSpaceAABBColliding(ICollisionVolume a, ICollisionVolume b)
+    private static bool IsHalfSpaceAABBColliding(ICollisionVolume a, ICollisionVolume b, ref CollisionData data)
     {
-        return IsHalfspaceAABBColliding_Impl(a as HalfspaceCollisionComponent, b as AABBCollisionComponent);
+        return IsHalfspaceAABBColliding_Impl(a as HalfspaceCollisionComponent, b as AABBCollisionComponent, ref data);
     }
-    private static bool IsHalfspaceAABBColliding_Impl(HalfspaceCollisionComponent a, AABBCollisionComponent b)
+    private static bool IsHalfspaceAABBColliding_Impl(HalfspaceCollisionComponent a, AABBCollisionComponent b, ref CollisionData data)
     {
         return false;
     }
     #endregion
 
     #region AABB Checks
-    private static bool IsAABBAABBCollliding(ICollisionVolume a, ICollisionVolume b)
+    private static bool IsAABBAABBCollliding(ICollisionVolume a, ICollisionVolume b, ref CollisionData data)
     {
-        return IsAABBAABBColliding_Impl(a as AABBCollisionComponent, b as AABBCollisionComponent);
+        return IsAABBAABBColliding_Impl(a as AABBCollisionComponent, b as AABBCollisionComponent, ref data);
     }
-    private static bool IsAABBAABBColliding_Impl(AABBCollisionComponent a, AABBCollisionComponent b)
+    private static bool IsAABBAABBColliding_Impl(AABBCollisionComponent a, AABBCollisionComponent b, ref CollisionData data)
     {
         return false;
     }
     #endregion
 
     /// <summary>
-    /// Calculates the required displacement to unintersect <see cref="ICollisionVolume"/>s <paramref name="a"/> and <paramref name="b"/>.<br/>
-    /// If <paramref name="a"/>'s <see cref="VelocityMode"/> is <see cref="VelocityMode.ZeroOnImpact"/>, <paramref name="velocity"/> will 
+    /// Calculates the required displacement to unintersect <see cref="ICollisionVolume"/>s <paramref name="collider"/> and <paramref name="b"/>.<br/>
+    /// If <paramref name="collider"/>'s <see cref="VelocityMode"/> is <see cref="VelocityMode.ZeroOnImpact"/>, <paramref name="velocity"/> will 
     /// be set to <see cref="Vector3.zero"/>.<br/>
-    /// If <paramref name="a"/>'s <see cref="VelocityMode"/> is <see cref="VelocityMode.Reflect"/>, <paramref name="velocity"/> will be reflected along
+    /// If <paramref name="collider"/>'s <see cref="VelocityMode"/> is <see cref="VelocityMode.Reflect"/>, <paramref name="velocity"/> will be reflected along
     /// the plane created from the collision.
     /// </summary>
-    /// <param name="velocity">The current velocity (if any) of <see cref="ICollisionVolume"/> <paramref name="a"/>.</param>
-    /// <param name="a">The current <see cref="ICollisionVolume"/> to check collisions with.</param>
+    /// <param name="velocity">The current velocity (if any) of <see cref="ICollisionVolume"/> <paramref name="collider"/>.</param>
+    /// <param name="collider">The current <see cref="ICollisionVolume"/> to check collisions with.</param>
     /// <param name="b">The opposing <see cref="ICollisionVolume"/> to check against.</param>
     /// <returns>
-    /// The displacement vector that unintersects <see cref="SphereCollisionComponent"/> <paramref name="a"/>.<br/>
+    /// The displacement vector that unintersects <see cref="SphereCollisionComponent"/> <paramref name="collider"/>.<br/>
     /// If <paramref name="b"/> is also kinematic, displacement vector will have 50% magnitude to account for both volumes being displaced.
     /// </returns>
-    public static Vector3 GetResponse(ref Vector3 velocity, ICollisionVolume a, ICollisionVolume b)
+    public static Vector3 GetResponse(ref Vector3 velocity, ref Vector3 position, ICollisionVolume collider, CollisionData colData)
     {
-        return (a.Type, b.Type) switch
+        return (collider.Type, colData.Other.Type) switch
         {
             (ColliderType.Sphere, ColliderType.Sphere) =>
-                SphereSphereCollisionResponse(ref velocity, a as SphereCollisionComponent, b as SphereCollisionComponent),
+                SphereSphereCollisionResponse(ref velocity, ref position, collider as SphereCollisionComponent, colData),
             (ColliderType.Sphere, ColliderType.Plane) =>
-                SpherePlaneCollisionResponse(ref velocity, a as SphereCollisionComponent, b as PlaneCollisionComponent),
+                SpherePlaneCollisionResponse(ref velocity, ref position, collider as SphereCollisionComponent, colData),
             (ColliderType.Sphere, ColliderType.Halfspace) =>
-                SphereHalfspaceCollisionResponse(ref velocity, a as SphereCollisionComponent, b as HalfspaceCollisionComponent),
+                SphereHalfspaceCollisionResponse(ref velocity, ref position, collider as SphereCollisionComponent, colData),
             (ColliderType.Sphere, ColliderType.AABB) =>
-                SphereAABBCollisionResponse(ref velocity, a as SphereCollisionComponent, b as AABBCollisionComponent),
+                SphereAABBCollisionResponse(ref velocity, ref position, collider as SphereCollisionComponent, colData),
             _ => Vector3.zero,
         };
     }
 
     #region Sphere Responses
-    private static Vector3 SphereSphereCollisionResponse(ref Vector3 velocity, SphereCollisionComponent a, SphereCollisionComponent b)
+    private static Vector3 SphereSphereCollisionResponse(ref Vector3 velocity, ref Vector3 position, SphereCollisionComponent sphere, CollisionData colData)
     {
-        Vector3 collisionPlaneNormal = (a.Center - b.Center).normalized;
-
-        if (a.VelocityMode == VelocityMode.ZeroOnImpact)
-        {
-            velocity = Vector3.zero;
-        }
-        else
-        {
-            float mag = velocity.magnitude;
-            velocity = Vector3.Reflect(velocity.normalized, collisionPlaneNormal) * mag;
-        }
-
-        if (a.IsKinematic == false)
+        if (!sphere.IsKinematic)
             return Vector3.zero;
 
-        float sumRadii = a.Radius + b.Radius;
-        float distance = Vector3.Distance(a.Center, b.Center);
-        float intersectionDistance = Mathf.Abs(distance - sumRadii);
+        Vector3 displacement = colData.CollisionNormal * colData.PenetrationDepth;
+        
+        /*if (colData.Other.IsKinematic)
+            displacement *= 0.5f;*/
+    
+        position += displacement;
 
-        Vector3 displacement = collisionPlaneNormal * intersectionDistance;
+        switch (sphere.VelocityMode) 
+        {
+            case VelocityMode.ZeroOnImpact:
+                velocity = Vector3.zero;
+                return displacement;
+            case VelocityMode.Reflect:
+                velocity = Vector3.Reflect((velocity - displacement).normalized, colData.CollisionNormal) * velocity.magnitude;
+                return displacement;
+            default:
+                return displacement;
+        }
+    }
 
-        if (b.IsKinematic == true)
+    private static Vector3 SpherePlaneCollisionResponse(ref Vector3 velocity, ref Vector3 position, SphereCollisionComponent sphere, CollisionData colData)
+    {
+        if (sphere.IsKinematic == false)
+            return Vector3.zero;
+
+        Vector3 displacement = colData.CollisionNormal * colData.PenetrationDepth;
+
+        if (colData.Other.IsKinematic)
             displacement *= 0.5f;
 
-        return displacement;
+        position += displacement;
+
+        switch (sphere.VelocityMode)
+        {
+            case VelocityMode.ZeroOnImpact:
+                velocity = Vector3.zero;
+                return displacement;
+            case VelocityMode.Reflect:
+                velocity = Vector3.Reflect((velocity - displacement).normalized, colData.CollisionNormal) * velocity.magnitude;
+                return displacement;
+            default:
+                return displacement;
+        }
     }
 
-    private static Vector3 SpherePlaneCollisionResponse(ref Vector3 velocity, SphereCollisionComponent a, PlaneCollisionComponent b)
+    private static Vector3 SphereHalfspaceCollisionResponse(ref Vector3 velocity, ref Vector3 position, SphereCollisionComponent a, CollisionData colData)
     {
-        Vector3 normal = b.Axes.Normal;
-
-        float distance = b.GetDistance(a.Center);
-        Vector3 displacement = Vector3.Project(a.Center - b.transform.position, normal).normalized * (a.Radius - distance);
-
-        if (a.VelocityMode == VelocityMode.ZeroOnImpact)
-        {
-            velocity = Vector3.zero;
-        }
-        else
-        {
-            velocity = Vector3.Reflect(velocity, normal);
-        }
-
-        // return the local vector required to unintersect a from b
-        return displacement;
-    }
-
-    private static Vector3 SphereHalfspaceCollisionResponse(ref Vector3 velocity, SphereCollisionComponent a, HalfspaceCollisionComponent b)
-    {
+        HalfspaceCollisionComponent b = colData.Other as HalfspaceCollisionComponent;
         Vector3 normal = b.Axes.Normal;
 
         if (a.VelocityMode == VelocityMode.ZeroOnImpact)
@@ -355,12 +393,12 @@ public static class Collisions
             velocity = Vector3.Reflect(velocity.normalized, normal) * mag;
         }
 
-        float displacement = a.Radius - b.GetSignedDistance(a.Center);
+        float displacement = a.Radius - b.GetSignedDistance(position);
 
         return normal * displacement;
     }
 
-    private static Vector3 SphereAABBCollisionResponse(ref Vector3 velocity, SphereCollisionComponent a, AABBCollisionComponent b)
+    private static Vector3 SphereAABBCollisionResponse(ref Vector3 velocity, ref Vector3 position, SphereCollisionComponent a, CollisionData colData)
     {
         return Vector3.zero;
     }

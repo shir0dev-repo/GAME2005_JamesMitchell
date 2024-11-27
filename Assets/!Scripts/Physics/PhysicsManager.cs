@@ -11,7 +11,8 @@ public class PhysicsManager : Singleton<PhysicsManager>
 {
     public static void MarkForUpdate() => m_shouldUpdate = true;
     private static bool m_shouldUpdate;
-    
+
+    public Vector3 Gravity => m_gravity;
     [SerializeField] private Vector3 m_gravity = Vector3.down * 9.81f;
 
     private readonly static List<PhysicsBody> m_actors = new List<PhysicsBody>();
@@ -20,6 +21,7 @@ public class PhysicsManager : Singleton<PhysicsManager>
     private void Start()
     {
         PhysicsBodyUpdateSystem.OnMarkForUpdate += MarkForUpdate;
+        CollisionManager.OnCollisionChecked += Unintersect;
     }
 
     private static void PhysicsManagerUpdateInjected()
@@ -32,6 +34,12 @@ public class PhysicsManager : Singleton<PhysicsManager>
 
             OnPhysicsUpdate?.Invoke(Instance, PhysicsBodyUpdateSystem.TimeStep);
         }
+    }
+
+    private void Unintersect()
+    {
+        foreach (PhysicsBody pb in m_actors)
+            pb.Unintersect();
     }
 
     public static void AddToLoop(PhysicsBody pb)
@@ -47,6 +55,7 @@ public class PhysicsManager : Singleton<PhysicsManager>
     protected override void OnApplicationQuit()
     {
         PhysicsBodyUpdateSystem.OnMarkForUpdate -= MarkForUpdate;
+        CollisionManager.OnCollisionChecked -= Unintersect;
         base.OnApplicationQuit();
     }
 }

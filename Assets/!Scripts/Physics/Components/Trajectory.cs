@@ -18,7 +18,7 @@ public class Trajectory : PhysicsComponentBase
         Destroy(gameObject, lifetime);
     }
 
-    public override Vector3 GetForce(Vector3 initial)
+    public override Vector3 GetForce(Vector3 initial, Vector3 collisionDisplacement)
     {
         if (m_firstFrame)
         {
