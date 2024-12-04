@@ -3,26 +3,22 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class CollisionManager : Singleton<CollisionManager>
+public class CollisionManager : InjectedSystem<CollisionManager>
 {
-    private static void MarkForUpdate() => m_shouldUpdate = true;
-    private static bool m_shouldUpdate = false;
     private static PartitionedSpace<CollisionComponent> m_space;
     [SerializeField] private Vector3Int m_chunkSize = Vector3Int.one * 16;
 
     private static readonly List<CollisionComponent> m_planesAndHalfspaces = new();
-    private static readonly List<CollisionComponent> m_currentlySimulatedColliders = new();
+
+    public PhysicsMaterialDatabase MaterialDatabase => m_materialDB;
+    [SerializeField] private PhysicsMaterialDatabase m_materialDB;
 
     [SerializeField] private bool m_drawChunks = false;
-    public static Action OnCollisionChecked;
-    private static void CollisionManagerUpdateInjected()
+
+    protected override void OnCollisionUpdate()
     {
-        if (m_shouldUpdate)
-        {
-            m_shouldUpdate = false;
-            m_space.UpdatePartitions();
-            OnCollisionChecked?.Invoke();
-        }
+        Debug.Log("checking collisions");
+        m_space.UpdatePartitions();
     }
 
     protected override void Awake()
@@ -31,14 +27,8 @@ public class CollisionManager : Singleton<CollisionManager>
         m_space = new PartitionedSpace<CollisionComponent>(m_chunkSize, CalculateCollisionsPerChunk);
     }
 
-    private void Start()
-    {
-        PhysicsBodyUpdateSystem.OnMarkForUpdate += MarkForUpdate;
-    }
-
     public static void AddToSimulation(CollisionComponent collider)
     {
-
         if (collider is PlaneCollisionComponent or HalfspaceCollisionComponent)
         {
             m_planesAndHalfspaces.Add(collider);
@@ -98,7 +88,10 @@ public class CollisionManager : Singleton<CollisionManager>
                     if (existingIndex == -1)
                         current.CurrentCollisions.Add(collisionData);
                     else
+                    {
                         current.CurrentCollisions[existingIndex].Update(collisionData);
+                        collisionData.TimeSinceCollisionStart += PhysicsBodyUpdateSystem.TimeStep;
+                    }
                 }
                 else
                 {
@@ -117,7 +110,7 @@ public class CollisionManager : Singleton<CollisionManager>
                 if ((current as ICollisionVolume).IsColliding(compare, ref collisionData))
                 {
                     current.CurrentlyColliding = true;
-                    
+
                     if (existingIndex == -1)
                         current.CurrentCollisions.Add(collisionData);
                     else
@@ -126,16 +119,10 @@ public class CollisionManager : Singleton<CollisionManager>
                 else
                 {
                     if (existingIndex != -1)
-                        current.CurrentCollisions.RemoveAt(existingIndex);                    
+                        current.CurrentCollisions.RemoveAt(existingIndex);
                 }
             }
         }
-    }
-
-    protected override void OnApplicationQuit()
-    {
-        PhysicsBodyUpdateSystem.OnMarkForUpdate -= MarkForUpdate;
-        base.OnApplicationQuit();
     }
 
     public void OnDrawGizmos()

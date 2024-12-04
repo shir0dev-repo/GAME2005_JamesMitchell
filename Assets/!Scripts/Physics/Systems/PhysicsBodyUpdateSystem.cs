@@ -3,11 +3,14 @@ using System.Reflection;
 using UnityEngine;
 using UnityEngine.LowLevel;
 
+public class PhysicsSystemInjected { }
+
 public class PhysicsBodyUpdateSystem
 {
     public const float TimeStep = 0.02f;
     private static float m_timer = 0;
-
+    static int frameCount = -1;
+    const bool STEP = false;
     private static readonly Type[] m_friendsList = new Type[]
     {
         typeof(PhysicsManager),
@@ -15,49 +18,62 @@ public class PhysicsBodyUpdateSystem
     };
 
     public static Action OnMarkForUpdate;
+    public static Action OnPreCollisionUpdate;
+    public static Action OnCollisionUpdate;
+    public static Action OnUnintersectionUpdate;
+    public static Action OnPostCollisionUpdate;
 
     [RuntimeInitializeOnLoadMethod]
     private static void Initialize()
     {
         PlayerLoopSystem playerLoopSystem = new PlayerLoopSystem
         {
-            type = typeof(PhysicsBodyUpdateSystem),
-            updateDelegate = UpdateInjected,
-            subSystemList = new PlayerLoopSystem[]
-            {
-                
-                // PhysicsManagerUpdate
-                new PlayerLoopSystem
-                {
-                    type = typeof(PhysicsManager),
-                    updateDelegate = GetSubsystemUpdateFunction(typeof(PhysicsManager))
-                },
-                // CollisionManagerUpdate
-                new PlayerLoopSystem
-                {
-                    type = typeof(CollisionManager),
-                    updateDelegate = GetSubsystemUpdateFunction(typeof(CollisionManager))
-                },                
-            }
+            type = typeof(PhysicsSystemInjected),
+            updateDelegate = PhysicsUpdateInjected
         };
 
         PlayerLoopInjector.InsertSystemAfter(playerLoopSystem, typeof(UnityEngine.PlayerLoop.TimeUpdate.WaitForLastPresentationAndUpdateTime));
     }
 
-    private static void UpdateInjected()
+    private static void PhysicsUpdateInjected()
     {
+        /*
+        Desired Order:
+           - PhysicsManager    - Move all bodies
+           - CollisionManager  - Check for overlaps
+           - PhysicsManager    - Unintersect all bodies
+           - PhysicsManager    - Adjust velocities based on collisions
+        */
         m_timer += Time.deltaTime;
+
         if (m_timer >= TimeStep)
         {
             m_timer -= TimeStep;
-            OnMarkForUpdate?.Invoke();
+            OnPreCollisionUpdate?.Invoke();
+            OnCollisionUpdate?.Invoke();
+            OnUnintersectionUpdate?.Invoke();
+            OnPostCollisionUpdate?.Invoke();
         }
-    }
-
-    private static PlayerLoopSystem.UpdateFunction GetSubsystemUpdateFunction(Type friend)
-    {
-        string methodName = friend.Name + "UpdateInjected";
-        return GetSubsystemUpdateFunction(friend, methodName);
+        if (STEP)
+        {
+            switch (frameCount % 4)
+            {
+                case 0:
+                    OnPreCollisionUpdate?.Invoke();
+                    break;
+                case 1:
+                    OnCollisionUpdate?.Invoke();
+                    break;
+                case 2:
+                    OnUnintersectionUpdate?.Invoke();
+                    break;
+                case 3:
+                    OnPostCollisionUpdate?.Invoke();
+                    break;
+            }
+            frameCount++;
+        }
+        
     }
 
     private static PlayerLoopSystem.UpdateFunction GetSubsystemUpdateFunction(Type friend, string methodName)

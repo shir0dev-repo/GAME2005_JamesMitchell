@@ -45,8 +45,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a393300f1bd7b7244a7ad738a01a5c79, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_deltaTime: 0.02
-  m_timeSinceStartup: 0
   m_gravity: {x: 0, y: -9.81, z: 0}
 --- !u!114 &2410207265730150780
 MonoBehaviour:
@@ -61,3 +59,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_chunkSize: {x: 16, y: 16, z: 16}
+  m_materialDB: {fileID: 11400000, guid: 71ff0782ac343d14ab2d36f21f4b18ee, type: 2}
+  m_drawChunks: 0

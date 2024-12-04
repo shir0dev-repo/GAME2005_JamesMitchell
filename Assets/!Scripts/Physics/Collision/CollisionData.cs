@@ -9,6 +9,7 @@ public class CollisionData
     public Vector3 ContactPoint;
     public Vector3 CollisionNormal;
     public float PenetrationDepth;
+    public float TimeSinceCollisionStart;
 
     public CollisionData()
     {

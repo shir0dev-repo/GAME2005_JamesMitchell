@@ -7,7 +7,7 @@ public class SphereCollisionComponent : CollisionComponent
     public override bool IsKinematic => m_isKinematic;
     [SerializeField] protected bool m_isKinematic = true;
     public override VelocityMode VelocityMode => m_velocityMode;
-    [SerializeField] protected VelocityMode m_velocityMode = VelocityMode.Reflect;
+    [SerializeField] protected VelocityMode m_velocityMode = VelocityMode.Restitution;
 
     public float Radius => m_radius;
     [SerializeField] private float m_radius = 0.5f;

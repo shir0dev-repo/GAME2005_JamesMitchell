@@ -14,7 +14,7 @@ public enum ColliderType
     LENGTH
 }
 
-public enum VelocityMode { Reflect, ZeroOnImpact }
+public enum VelocityMode { Reflect, ZeroOnImpact, Restitution }
 
 public static class Collisions
 {
@@ -132,7 +132,7 @@ public static class Collisions
         {
             warningCount += 1;
 
-            
+
 
             return unimplementedCollision;
         }
@@ -334,13 +334,13 @@ public static class Collisions
             return Vector3.zero;
 
         Vector3 displacement = colData.CollisionNormal * colData.PenetrationDepth;
-        
+
         /*if (colData.Other.IsKinematic)
             displacement *= 0.5f;*/
-    
+
         position += displacement;
 
-        switch (sphere.VelocityMode) 
+        switch (sphere.VelocityMode)
         {
             case VelocityMode.ZeroOnImpact:
                 velocity = Vector3.zero;
@@ -358,20 +358,33 @@ public static class Collisions
         if (sphere.IsKinematic == false)
             return Vector3.zero;
 
-        Vector3 displacement = colData.CollisionNormal * colData.PenetrationDepth;
-
+        Vector3 displacement = Vector3.Project(position, colData.CollisionNormal).normalized * (colData.PenetrationDepth - sphere.SkinWidth);
+        
         if (colData.Other.IsKinematic)
             displacement *= 0.5f;
 
         position += displacement;
 
+        // continuous
+        if (colData.TimeSinceCollisionStart > PhysicsBodyUpdateSystem.TimeStep)
+        {
+            velocity -= Vector3.Project(velocity.normalized, colData.CollisionNormal) * velocity.magnitude;
+            return displacement;
+        }
+
+        // only modify velocity if initial collision
         switch (sphere.VelocityMode)
         {
             case VelocityMode.ZeroOnImpact:
                 velocity = Vector3.zero;
                 return displacement;
             case VelocityMode.Reflect:
-                velocity = Vector3.Reflect((velocity - displacement).normalized, colData.CollisionNormal) * velocity.magnitude;
+            case VelocityMode.Restitution:
+                float effectiveRestitution = Mathf.Min(sphere.GetBody().Restitution(), colData.Other.GetBody().Restitution());
+                
+                velocity = -(effectiveRestitution) * (Vector3.Project(velocity.normalized, colData.CollisionNormal) * velocity.magnitude);
+
+                //velocity *= (1 - colData.PenetrationDepth);
                 return displacement;
             default:
                 return displacement;

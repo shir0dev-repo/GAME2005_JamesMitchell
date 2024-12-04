@@ -5,7 +5,7 @@ using UnityEngine;
 public class HalfspaceCollisionComponent : CollisionComponent, ICollisionVolume
 {
     public override ColliderType Type => ColliderType.Halfspace;
-    public override VelocityMode VelocityMode => VelocityMode.ZeroOnImpact;
+    public override VelocityMode VelocityMode => VelocityMode.Restitution;
     public override bool IsKinematic => false;
     
     public PlaneAxis Axes => m_axes;
@@ -15,8 +15,10 @@ public class HalfspaceCollisionComponent : CollisionComponent, ICollisionVolume
     private Vector3 m_positionLastFrame;
     private Quaternion m_rotationLastFrame;
 
-    private void Awake()
+    protected override void Awake()
     {
+        base.Awake();
+
         m_axes = new PlaneAxis(transform.up);
         m_positionLastFrame = transform.position;
         m_rotationLastFrame = transform.rotation;

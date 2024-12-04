@@ -15,8 +15,10 @@ public class PlaneCollisionComponent : CollisionComponent
     private Vector3 m_positionLastFrame;
     private Quaternion m_rotationLastFrame;
 
-    private void Awake()
+    protected override void Awake()
     {
+        base.Awake();
+
         m_axes = new PlaneAxis(transform.up, Vector3.Distance(Vector3.zero, transform.position));
         m_positionLastFrame = transform.position;
         m_rotationLastFrame = transform.rotation;

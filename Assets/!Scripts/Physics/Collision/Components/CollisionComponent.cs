@@ -11,7 +11,7 @@ public abstract class CollisionComponent : MonoBehaviour, ICollisionVolume, IPhy
     public abstract bool IsKinematic { get; }
 
     public float SkinWidth => m_skinWidth;
-    [SerializeField] protected float m_skinWidth = 0.05f;
+    [SerializeField] protected float m_skinWidth = 0.03f;
 
     public bool CurrentlyColliding { get; set; }
     public List<CollisionData> CurrentCollisions => m_currentCollisions;
@@ -28,11 +28,12 @@ public abstract class CollisionComponent : MonoBehaviour, ICollisionVolume, IPhy
     public Vector3 DisplacementThisFrame => m_displacementThisFrame;
     [SerializeField] protected Vector3 m_displacementThisFrame = Vector3.zero;
 
+    public PhysicsBody GetBody() { return m_body; }
     protected PhysicsBody m_body;
 
     public abstract float CrossSectionalArea(Vector3 normal);
 
-    private void Awake()
+    protected virtual void Awake()
     {
         m_body = GetComponent<PhysicsBody>();
     }
@@ -42,44 +43,32 @@ public abstract class CollisionComponent : MonoBehaviour, ICollisionVolume, IPhy
         CollisionManager.AddToSimulation(this);
     }
 
-    public Vector3 ResolveCollisions(Vector3 velocity, out Vector3 resolvedPosition)
+    public Vector3 ResolveCollisions(Vector3 position, Vector3 velocity, out Vector3 resolvedVelocity)
     {
         m_displacementThisFrame = Vector3.zero;
-        Vector3 result = velocity;
-        resolvedPosition = transform.position;
+
+        Vector3 initialVelocity = velocity;
+        Vector3 resolvedPosition = position;
+
+        if (CurrentCollisions.Count <= 0)
+        {
+            resolvedVelocity = velocity;
+            return position;
+        }
+
+        resolvedVelocity = initialVelocity;
+
         CollisionData colData;
         for (int i = 0; i < CurrentCollisions.Count; i++)
         {
             colData = CurrentCollisions[i];
-            // this is a new collision
-            Vector3 displacement = (this as ICollisionVolume).GetCollisionResponse(ref result, ref resolvedPosition, colData);
-            if (displacement.sqrMagnitude > m_skinWidth * m_skinWidth)
-            {
-                m_displacementThisFrame += displacement;
-                resolvedPosition += displacement;
-            }
-        }
-
-        return result;
-    }
-
-    public void ResolveCollisionsDirect(ref Vector3 resultantVelocity)
-    {
-        Vector3 initialPosition = transform.position;
-        CollisionData colData;
-        for (int i = 0; i < CurrentCollisions.Count; i++)
-        {
-             colData = CurrentCollisions[i];
-            Vector3 vel = resultantVelocity;
-            Vector3 displacement = (this as ICollisionVolume).GetCollisionResponse(ref vel, ref initialPosition, colData);
+            
+            Vector3 displacement = (this as ICollisionVolume).GetCollisionResponse(ref resolvedVelocity, ref resolvedPosition, colData);
 
             m_displacementThisFrame += displacement;
-            initialPosition += displacement;
-            
-            resultantVelocity = vel;
         }
 
-        transform.position = initialPosition;
+        return resolvedPosition;
     }
 
     protected virtual void ApplyFriction(ref Vector3 resultantVelocity, ICollisionVolume other, Vector3 collisionAdjustment)

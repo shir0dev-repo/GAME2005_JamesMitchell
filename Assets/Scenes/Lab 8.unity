@@ -340,10 +340,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 2410207265730150780, guid: fb1c0adf822728548a9e3708c6f227b5, type: 3}
-      propertyPath: m_drawChunks
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 6934209164509232450, guid: fb1c0adf822728548a9e3708c6f227b5, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -405,8 +401,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 431bd22e5a97c694a95a32ede49ec3e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_applicationMode: 0
   m_gravityScale: 1
   m_gravity: {x: 0, y: -9.81, z: 0}
+  m_effectiveForce: {x: 0, y: 0, z: 0}
 --- !u!114 &1227653234
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -419,11 +417,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e5c4ded9f5e58c4fb337fb8533023ec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_skinWidth: 0.05
+  m_skinWidth: 0.01
   m_currentCollisions: []
   m_displacementThisFrame: {x: 0, y: 0, z: 0}
   m_isKinematic: 1
-  m_velocityMode: 1
+  m_velocityMode: 2
   m_radius: 0.5
 --- !u!1 &1367966593
 GameObject:
@@ -439,7 +437,7 @@ GameObject:
   - component: {fileID: 1367966595}
   - component: {fileID: 1367966594}
   m_Layer: 0
-  m_Name: Plane
+  m_Name: Sheet Metal
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -474,11 +472,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_simulationMode: 0
   m_mass: 1
-  m_simulateFriction: 1
-  m_kineticFriction: 1
-  m_staticFriction: 1
   m_velocity: {x: 0, y: 0, z: 0}
-  physicsComponents: []
+  m_material: {fileID: 11400000, guid: 8045643b350163942ba96976a901bde8, type: 2}
 --- !u!23 &1367966596
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -537,13 +532,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1367966593}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: -0.38268343, w: 0.92387956}
+  m_LocalRotation: {x: 0, y: 0, z: 0.38268343, w: 0.92387956}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -45}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 45}
 --- !u!23 &2491021073326210576
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -617,7 +612,7 @@ GameObject:
   - component: {fileID: 1227653233}
   - component: {fileID: 7706793467797718985}
   m_Layer: 0
-  m_Name: CollisionSphere
+  m_Name: Wood Ball
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -645,12 +640,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_simulationMode: 1
   m_mass: 1
-  m_simulateFriction: 1
-  m_kineticFriction: 0.5
-  m_staticFriction: 0.5
   m_velocity: {x: 0, y: 0, z: 0}
-  physicsComponents:
-  - {fileID: 1227653233}
+  m_material: {fileID: 11400000, guid: 1cb2ce92ae1e67c46884f4c74205e242, type: 2}
 --- !u!114 &7706793467797718985
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -663,10 +654,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 213bdd4aab81f1f49aeb7872d02e52d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_applicationMode: 1
   m_normalForce: {x: 0, y: 0, z: 0}
   m_frictionForce: {x: 0, y: 0, z: 0}
   m_gravityForce: {x: 0, y: 0, z: 0}
-  m_frictionCoefficient: 0.5
   m_activeFriction: {x: 0, y: 0, z: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
@@ -675,5 +666,5 @@ SceneRoots:
   - {fileID: 379784056}
   - {fileID: 80643024}
   - {fileID: 761679019}
-  - {fileID: 1367966598}
   - {fileID: 5406522808798441565}
+  - {fileID: 1367966598}

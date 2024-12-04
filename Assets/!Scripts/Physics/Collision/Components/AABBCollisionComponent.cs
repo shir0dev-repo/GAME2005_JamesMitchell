@@ -8,7 +8,7 @@ public class AABBCollisionComponent : CollisionComponent
 {
     public override ColliderType Type => ColliderType.AABB;
     public override VelocityMode VelocityMode => m_velocityMode;
-    [SerializeField] private VelocityMode m_velocityMode;
+    [SerializeField] private VelocityMode m_velocityMode = VelocityMode.Restitution;
 
     public override bool IsKinematic => m_isKinematic;
     [SerializeField] private bool m_isKinematic = true;
