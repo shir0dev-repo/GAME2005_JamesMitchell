@@ -7,6 +7,7 @@ public class PlaneAxis
     public Vector3 Normal;
     public Vector3 Tangent;
     public Vector3 Bitangent;
+    public float D => Origin.magnitude;
 
     public PlaneAxis(Vector3 normal)
     {

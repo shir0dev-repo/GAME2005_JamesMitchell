@@ -1,11 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class BallSpawner : MonoBehaviour
 {
     [SerializeField] PhysicsMaterialDatabase m_materialDB;
-    [SerializeField] private PhysicsBody pf_ball;
+    [SerializeField] private PhysicsBody[] pf_spawnedBodies;
     [Space]
     [SerializeField] private float m_spawnForce = 10f;
     [SerializeField] bool m_flipCamera = false;
@@ -23,7 +21,7 @@ public class BallSpawner : MonoBehaviour
         if (Input.GetMouseButton(0) && m_spawnTimer <= 0)
         {
             m_spawnTimer = 0.25f;
-            PhysicsBody pb = Instantiate(pf_ball, transform.position, Quaternion.identity);
+            PhysicsBody pb = Instantiate(pf_spawnedBodies[Random.Range(0, pf_spawnedBodies.Length)], transform.position, Quaternion.identity);
             pb.AddImpulse(transform.forward, m_spawnForce);
             pb.GetComponent<CollisionComponent>().SetMaterial(m_materialDB.Database[Random.Range(0, m_materialDB.Database.Count)]);
             

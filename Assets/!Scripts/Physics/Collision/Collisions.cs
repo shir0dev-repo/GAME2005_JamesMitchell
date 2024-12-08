@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public enum ColliderType
 {
@@ -36,7 +37,6 @@ public static class Collisions
         };
 
         _UNIMPLEMENTED_COLLISIONS =
-            _COL_BIT_MASK[ColliderType.AABB] |
             _COL_BIT_MASK[ColliderType.OBB];
 
         Interactions = new CollisionCheckDelegate[(int)ColliderType.LENGTH][];
@@ -198,9 +198,9 @@ public static class Collisions
 
     private static bool IsSpherePlaneColliding(ICollisionVolume a, ICollisionVolume b, CollisionData data)
     {
-        return IsSpherePlaneColliding_Impl(a as SphereCollisionComponent, b as PlaneCollisionComponent, ref data);
+        return IsSpherePlaneColliding_Impl(a as SphereCollisionComponent, b as PlaneCollisionComponent, data);
     }
-    private static bool IsSpherePlaneColliding_Impl(SphereCollisionComponent sphere, PlaneCollisionComponent plane, ref CollisionData data)
+    private static bool IsSpherePlaneColliding_Impl(SphereCollisionComponent sphere, PlaneCollisionComponent plane, CollisionData data)
     {
         float distance = plane.GetDistance(sphere.TheoreticalPosition);
 
@@ -224,9 +224,9 @@ public static class Collisions
 
     private static bool IsSphereHalfSpaceColliding(ICollisionVolume a, ICollisionVolume b, CollisionData data)
     {
-        return IsSphereHalfspaceColliding_Impl(a as SphereCollisionComponent, b as HalfspaceCollisionComponent, ref data);
+        return IsSphereHalfspaceColliding_Impl(a as SphereCollisionComponent, b as HalfspaceCollisionComponent, data);
     }
-    private static bool IsSphereHalfspaceColliding_Impl(SphereCollisionComponent sphere, HalfspaceCollisionComponent halfspace, ref CollisionData data)
+    private static bool IsSphereHalfspaceColliding_Impl(SphereCollisionComponent sphere, HalfspaceCollisionComponent halfspace, CollisionData data)
     {
         float distance = halfspace.GetSignedDistance(sphere.TheoreticalPosition);
 
@@ -249,29 +249,38 @@ public static class Collisions
 
     private static bool IsSphereAABBColliding(ICollisionVolume a, ICollisionVolume b, CollisionData data)
     {
-        return IsSphereAABBColliding_Impl(a as SphereCollisionComponent, b as AABBCollisionComponent, ref data);
+        return IsSphereAABBColliding_Impl(a as SphereCollisionComponent, b as AABBCollisionComponent, data);
     }
-    private static bool IsSphereAABBColliding_Impl(SphereCollisionComponent a, AABBCollisionComponent b, ref CollisionData data)
+    private static bool IsSphereAABBColliding_Impl(SphereCollisionComponent sphere, AABBCollisionComponent box, CollisionData data)
     {
-        return false;
+        Vector3 closestPoint = box.GetClosestPoint(sphere.TheoreticalPosition);
+        float distance = Vector3.Distance(closestPoint, sphere.TheoreticalPosition);
+
+        if (distance > sphere.Radius)
+        {
+            return false;
+        }
+        else
+        {
+            data.Update(sphere, box,
+                (sphere.transform.position - box.transform.position).normalized,
+                box.GetBody().Velocity - sphere.GetBody().Velocity,
+                closestPoint,
+                sphere.Radius - distance,
+                false);
+
+            return true;
+        }
     }
     #endregion
 
     #region Plane Checks
     private static bool IsPlanePlaneColliding(ICollisionVolume a, ICollisionVolume b, CollisionData data)
     {
-        return IsPlanePlaneColliding_Impl(a as PlaneCollisionComponent, b as PlaneCollisionComponent, data);
-    }
-    private static bool IsPlanePlaneColliding_Impl(PlaneCollisionComponent a, PlaneCollisionComponent b, CollisionData data)
-    {
         return false;
     }
 
     private static bool IsPlaneHalfSpaceColliding(ICollisionVolume a, ICollisionVolume b, CollisionData data)
-    {
-        return IsPlaneHalfspaceColliding_Impl(a as PlaneCollisionComponent, b as HalfspaceCollisionComponent, data);
-    }
-    private static bool IsPlaneHalfspaceColliding_Impl(PlaneCollisionComponent a, HalfspaceCollisionComponent b, CollisionData data)
     {
         return false;
     }
@@ -280,18 +289,30 @@ public static class Collisions
     {
         return IsPlaneAABBColliding_Impl(a as PlaneCollisionComponent, b as AABBCollisionComponent, data);
     }
-    private static bool IsPlaneAABBColliding_Impl(PlaneCollisionComponent a, AABBCollisionComponent b, CollisionData data)
+    private static bool IsPlaneAABBColliding_Impl(PlaneCollisionComponent plane, AABBCollisionComponent box, CollisionData data)
     {
-        return false;
+        float distanceToExtents = plane.GetDistance(box.TheoreticalPosition + box.HalfExtents);
+        float distanceToCenter = Mathf.Abs(Vector3.Dot(plane.Axes.Normal, box.TheoreticalPosition) - plane.Axes.D);
+
+        if (distanceToCenter > distanceToExtents)
+        {
+            return false;
+        }
+        else
+        {
+            data.Update(plane, box,
+                plane.Axes.Normal,
+                -box.GetBody().Velocity,
+                box.GetClosestPoint(box.TheoreticalPosition - Vector3.Project(box.TheoreticalPosition, plane.Axes.Normal)),
+                distanceToExtents - distanceToCenter,
+                false);
+            return true;
+        }
     }
     #endregion
 
     #region Half Space Checks
     private static bool IsHalfSpaceHalfSpaceColliding(ICollisionVolume a, ICollisionVolume b, CollisionData data)
-    {
-        return IsHalfspaceHalfspaceColliding_Impl(a as HalfspaceCollisionComponent, b as HalfspaceCollisionComponent, data);
-    }
-    private static bool IsHalfspaceHalfspaceColliding_Impl(HalfspaceCollisionComponent a, HalfspaceCollisionComponent b, CollisionData data)
     {
         return false;
     }
@@ -300,9 +321,30 @@ public static class Collisions
     {
         return IsHalfspaceAABBColliding_Impl(a as HalfspaceCollisionComponent, b as AABBCollisionComponent, data);
     }
-    private static bool IsHalfspaceAABBColliding_Impl(HalfspaceCollisionComponent a, AABBCollisionComponent b, CollisionData data)
+    private static bool IsHalfspaceAABBColliding_Impl(HalfspaceCollisionComponent halfspace, AABBCollisionComponent box, CollisionData data)
     {
-        return false;
+        Vector3 normal = halfspace.Axes.Normal;
+        float projectionRadius =
+            Mathf.Abs(normal.x * box.HalfExtents.x) +
+            Mathf.Abs(normal.y * box.HalfExtents.y) +
+            Mathf.Abs(normal.z * box.HalfExtents.z);
+
+        float distance = halfspace.GetSignedDistance(box.TheoreticalPosition);
+
+        if (distance > projectionRadius)
+        {
+            return false;
+        }
+        else
+        {
+            data.Update(halfspace, box,
+                halfspace.Axes.Normal,
+                -box.GetBody().Velocity,
+                box.FindMostSimilarVertex(-normal) + box.TheoreticalPosition,
+                projectionRadius - distance,
+                false);
+            return true;
+        }
     }
     #endregion
 
@@ -313,7 +355,41 @@ public static class Collisions
     }
     private static bool IsAABBAABBColliding_Impl(AABBCollisionComponent a, AABBCollisionComponent b, CollisionData data)
     {
-        return false;
+        Vector3 sumExtents = a.HalfExtents + b.HalfExtents;
+        Vector3 axialDistance = (a.TheoreticalPosition - b.TheoreticalPosition).Absolute();
+
+        if (axialDistance.x > sumExtents.x || axialDistance.y > sumExtents.y || axialDistance.z > sumExtents.z)
+        {
+            return false;
+        }
+        else
+        {
+            Vector3 normal = axialDistance.normalized;
+            Vector3 overlap = sumExtents - (a.TheoreticalPosition - b.TheoreticalPosition).Absolute();
+            float depth = Mathf.Min(overlap.x, Mathf.Min(overlap.y, overlap.z));
+
+            /* Might need later
+            Vector3 axis;
+            if (depth == overlap.x)
+                axis = Vector3.left;
+            else if (depth == overlap.y)
+                axis = Vector3.down;
+            else
+                axis = Vector3.back;
+            
+            normal = axis * Mathf.Sign(Vector3.Dot(axis, normal));
+            */
+
+            data.Update(a, b,
+                normal,
+                b.GetBody().Velocity - a.GetBody().Velocity,
+                a.TheoreticalPosition + Vector3.Scale(normal, a.HalfExtents),
+                depth,
+                false);
+
+            return true;
+        }
+        
     }
     #endregion
 
@@ -341,6 +417,12 @@ public static class Collisions
                 SphereHalfspaceCollisionResponse(ref colData),
             (ColliderType.Sphere, ColliderType.AABB) =>
                 SphereAABBCollisionResponse(ref colData),
+            (ColliderType.Plane, ColliderType.AABB) =>
+                PlaneAABBCollisionResponse(ref colData),
+            (ColliderType.Halfspace, ColliderType.AABB) =>
+                HalfspaceAABBCollisionResponse(ref colData),
+                (ColliderType.AABB, ColliderType.AABB) =>
+                    AABBAABBCollisionResponse(ref colData),
             _ => Vector3.zero,
         };
     }
@@ -357,7 +439,7 @@ public static class Collisions
         sphereB.transform.position -= displacement;
 
         ApplyRelativeImpulses(colData);
-        
+
         colData.IsResolved = true;
         return displacement;
     }
@@ -392,7 +474,7 @@ public static class Collisions
         Vector3 displacement = colData.CollisionNormal * (colData.PenetrationDepth - sphere.SkinWidth);
 
         sphere.transform.position += displacement;
-        
+
         ApplyImpulse(sphere, colData);
 
         if (colData.TimeSinceCollisionStart >= PhysicsBodyUpdateSystem.TimeStep)
@@ -409,6 +491,67 @@ public static class Collisions
     {
         return Vector3.zero;
     }
+
+    private static Vector3 PlaneAABBCollisionResponse(ref CollisionData colData)
+    {
+        AABBCollisionComponent box = colData.Other as AABBCollisionComponent;
+
+        Vector3 displacement = colData.CollisionNormal * (colData.PenetrationDepth - box.SkinWidth);
+        box.transform.position += displacement;
+
+        ApplyImpulse(box, colData);
+
+        if (colData.TimeSinceCollisionStart >= PhysicsBodyUpdateSystem.TimeStep)
+        {
+            Vector3 velocityOnPlane = colData.RelativeVelocity - Vector3.Project(colData.RelativeVelocity, colData.CollisionNormal);
+            ApplyFriction(box, velocityOnPlane, colData);
+        }
+
+        colData.IsResolved = true;
+        return displacement;
+    }
+
+    private static Vector3 HalfspaceAABBCollisionResponse(ref CollisionData colData)
+    {
+        AABBCollisionComponent box = colData.Other as AABBCollisionComponent;
+
+        Vector3 displacement = colData.CollisionNormal * (colData.PenetrationDepth - box.SkinWidth);
+        box.transform.position += displacement;
+
+        ApplyImpulse(box, colData);
+
+        if (colData.TimeSinceCollisionStart >= PhysicsBodyUpdateSystem.TimeStep)
+        {
+            Vector3 velocityOnPlane = colData.RelativeVelocity - Vector3.Project(colData.RelativeVelocity, colData.CollisionNormal);
+            ApplyFriction(box, velocityOnPlane, colData);
+        }
+
+        colData.IsResolved = true;
+        return displacement;
+    }
+
+    private static Vector3 AABBAABBCollisionResponse(ref CollisionData colData)
+    {
+        AABBCollisionComponent boxA = colData.Focused as AABBCollisionComponent;
+        AABBCollisionComponent boxB = colData.Other as AABBCollisionComponent;
+        
+        float avgSkinWidth = (boxA.SkinWidth + boxB.SkinWidth) / 2.0f;
+        Vector3 displacement = (colData.PenetrationDepth - avgSkinWidth) * 0.5f * colData.CollisionNormal;
+        
+        boxA.transform.position += displacement;
+        boxB.transform.position -= displacement;
+
+        ApplyRelativeImpulses(colData);
+
+        if (colData.TimeSinceCollisionStart >= PhysicsBodyUpdateSystem.TimeStep)
+        {
+            //ApplyRelativeFriction(colData);
+        }
+
+        colData.IsResolved = true;
+        return displacement;
+    }
+
     #endregion
 
     #region Common
@@ -419,7 +562,7 @@ public static class Collisions
     {
         // velocity is towards plane
         float vDotN = Vector3.Dot(colData.RelativeVelocity, colData.CollisionNormal);
-        
+
         // apply impulse
         if (colData.TimeSinceCollisionStart <= PhysicsBodyUpdateSystem.TimeStep)
         {
@@ -442,7 +585,7 @@ public static class Collisions
     private static void ApplyRelativeImpulses(CollisionData colData)
     {
         float v1DotN = Vector3.Dot(colData.RelativeVelocity, colData.CollisionNormal);
-        
+
         float inverseSumMasses = 1.0f / (colData.Focused.GetBody().Mass + colData.Other.GetBody().Mass);
         float effectiveRestitution = Mathf.Min(colData.Focused.Material.Bounciness(), colData.Other.Material.Bounciness());
 
@@ -472,6 +615,34 @@ public static class Collisions
             Vector3 kineticForce = Mathf.Lerp(0, tangentialVelocity.magnitude, effectiveKinetic) * frictionDirection;
 
             obj.GetBody().AddImpulseUnscaledTime(kineticForce);
+        }
+    }
+
+    private static void ApplyRelativeFriction(CollisionData colData)
+    {
+        Vector3 v1AlongN = colData.RelativeVelocity - Vector3.Project(colData.RelativeVelocity, colData.CollisionNormal);
+        Vector3 velBA = colData.Other.GetBody().Velocity - colData.Focused.GetBody().Velocity;
+        Vector3 v2AlongN = velBA - Vector3.Project(velBA, -colData.CollisionNormal);
+
+        float staticCoefficient = (colData.Focused.Material.FrictionThreshold() + colData.Other.Material.FrictionThreshold()) * 0.5f;
+        float kineticCoefficient = (colData.Focused.Material.Roughness() + colData.Other.Material.Roughness()) * 0.5f;
+
+        colData.Focused.GetBody().AddImpulseUnscaledTime(GetFrictionForce(v1AlongN, colData.CollisionNormal, staticCoefficient, kineticCoefficient));
+        colData.Other.GetBody().AddImpulseUnscaledTime(GetFrictionForce(v2AlongN, -colData.CollisionNormal, staticCoefficient, kineticCoefficient));
+    }
+
+    private static Vector3 GetFrictionForce(Vector3 tangentialVelocity, Vector3 normal, float staticThreshold, float kineticCoefficient)
+    {
+        Vector3 frictionDirection = -tangentialVelocity.normalized;
+        float effectiveFriction = Vector3.Dot(tangentialVelocity, frictionDirection);
+
+        if (effectiveFriction < staticThreshold)
+        {
+            return frictionDirection * effectiveFriction;
+        }
+        else
+        {
+            return Mathf.Lerp(0, tangentialVelocity.magnitude, kineticCoefficient) * frictionDirection;
         }
     }
     #endregion
