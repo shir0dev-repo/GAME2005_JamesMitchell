@@ -5,6 +5,31 @@ using UnityEngine;
 
 public class PartitionedSpace<T> where T : IPartitionable
 {
+    private enum Directions
+    {
+        LEFT,
+        RIGHT,
+        UP,
+        DOWN,
+        FORWARD,
+        BACK
+    }
+
+    private static Vector3Int GetCorrespondingDirection(Directions dir)
+    {
+        return (dir) switch
+        {
+            Directions.LEFT => Vector3Int.left,
+            Directions.RIGHT => Vector3Int.right,
+            Directions.UP => Vector3Int.up,
+            Directions.DOWN => Vector3Int.down,
+            Directions.FORWARD => Vector3Int.forward,
+            Directions.BACK => Vector3Int.back,
+            _ => new Vector3Int(int.MaxValue, int.MaxValue, int.MaxValue) // fuck you
+        };
+    }
+
+
     public Dictionary<Vector3Int, Partition<T>> Partitions => m_loadedPartitions;
     private Dictionary<Vector3Int, Partition<T>> m_loadedPartitions;
     
@@ -60,6 +85,24 @@ public class PartitionedSpace<T> where T : IPartitionable
         {
             m_partitionProcess?.Invoke(part.Value);
         }
+    }
+
+    public Partition<T>[] GetNeighbours(Partition<T> centerChunk, bool includeCenter = false)
+    {
+        Directions[] directions = (Directions[]) Enum.GetValues(typeof(Directions));
+        List<Partition<T>> neighbours = new();
+        
+        if (includeCenter)
+            neighbours.Add(centerChunk);
+
+        foreach (Directions dir in directions)
+        {
+            Vector3Int key = GetCorrespondingDirection(dir) * m_chunkSize + centerChunk.ChunkPos;
+            if (m_loadedPartitions.ContainsKey(key))
+                neighbours.Add(m_loadedPartitions[key]);
+        }
+
+        return neighbours.ToArray();
     }
 
     public void SetPerChunkCalculation(PartitionProcess chunkAction)

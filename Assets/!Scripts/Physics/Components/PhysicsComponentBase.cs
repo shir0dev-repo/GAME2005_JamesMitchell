@@ -8,7 +8,7 @@ public abstract class PhysicsComponentBase : MonoBehaviour, IPhysicsComponent
 {
 
     protected PhysicsBody m_body;
-    public abstract Vector3 GetForce(Vector3 initial, Vector3 collisionDisplacement);
+    public abstract Vector3 GetForce(Vector3 initial);
     public ApplicationMode ForceApplicationMode => m_applicationMode;
     [SerializeField] private ApplicationMode m_applicationMode = ApplicationMode.BeforeCollision;
 

@@ -12,8 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 737b7e9c4fcd4434bb52b5f360ee4507, type: 3}
   m_Name: Wood
   m_EditorClassIdentifier: 
-  ID: 2
+  ID: -1
   Name: Wood
-  Restitution: 0
-  StaticFrictionThreshold: 0
-  KineticFrictionCoefficient: 1
+  m_restitution: 0.5
+  m_staticFrictionThreshold: 0.6
+  m_kineticFrictionCoefficient: 0.4
+  m_density: 2.4
+  m_material: {fileID: 2100000, guid: c7ad225fcf1c6c7488880fd76daf62dd, type: 2}

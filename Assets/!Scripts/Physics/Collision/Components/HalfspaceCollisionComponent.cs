@@ -34,6 +34,11 @@ public class HalfspaceCollisionComponent : CollisionComponent, ICollisionVolume
         }
     }
 
+    public override float Volume()
+    {
+        return 1;
+    }
+
     /// <summary>Half spaces are infinite, and that would be baaad.</summary>
     public override float CrossSectionalArea(Vector3 normal)
     {

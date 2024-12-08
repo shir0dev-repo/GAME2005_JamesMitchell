@@ -19,7 +19,7 @@ public class PlaneCollisionComponent : CollisionComponent
     {
         base.Awake();
 
-        m_axes = new PlaneAxis(transform.up, Vector3.Distance(Vector3.zero, transform.position));
+        m_axes = new PlaneAxis(transform);
         m_positionLastFrame = transform.position;
         m_rotationLastFrame = transform.rotation;
     }
@@ -34,16 +34,21 @@ public class PlaneCollisionComponent : CollisionComponent
         }
     }
 
+    public override float Volume()
+    {
+        return 1;
+    }
+
     /// <summary>Planes are infinite, and that would be baaad.</summary>
     public override float CrossSectionalArea(Vector3 _) => 1;
 
     public float GetDistance(Vector3 position)
     {
+        Vector3 localPosition = position - m_axes.Origin;
         return
             Mathf.Abs(
-            m_axes.Normal.x * position.x +
-            m_axes.Normal.y * position.y +
-            m_axes.Normal.z * position.z -
-            m_axes.DistanceFromOrigin);
+            m_axes.Normal.x * localPosition.x +
+            m_axes.Normal.y * localPosition.y +
+            m_axes.Normal.z * localPosition.z);
     }
 }

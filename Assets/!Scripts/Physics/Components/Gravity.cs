@@ -9,10 +9,8 @@ public class Gravity : PhysicsComponentBase
     [SerializeField, ReadOnly] Vector3 m_effectiveForce = Vector3.zero;
     public Vector3 GForce => m_gravity * m_gravityScale;
 
-    public override Vector3 GetForce(Vector3 _1, Vector3 collisionDisplacement)
+    public override Vector3 GetForce(Vector3 initial)
     {
-        /*if (collisionDisplacement != Vector3.zero) return Vector3.zero;
-*/
         m_effectiveForce = m_gravityScale * m_body.Mass * m_gravity;
         return m_effectiveForce;
     }

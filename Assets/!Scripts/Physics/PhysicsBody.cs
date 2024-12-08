@@ -13,76 +13,79 @@ public class PhysicsBody : MonoBehaviour
     public float Mass => m_mass;
     [SerializeField, Min(0.5f)] protected float m_mass = 1f;
 
-    public float Roughness() => m_material.KineticFrictionCoefficient;
-    public float StaticFriction() => m_material.StaticFrictionThreshold;
-    public float Restitution() => m_material.Restitution;
-
     public Vector3 Velocity => m_velocity;
     [SerializeField, ReadOnly] private Vector3 m_velocity = Vector3.zero;
     [SerializeField, ReadOnly] private Vector3 m_positionLastFrame = Vector3.zero;
     [SerializeField, ReadOnly] private Vector3 m_summatedForces;
 
-    private Friction m_friction;
-
     protected PhysicsComponentBase[] m_physicsComponents;
-
-    [SerializeField] private PhysicsMaterial m_material;
 
     private CollisionComponent m_collisionComponent;
     private bool m_collisionsEnabled = false;
 
+    [SerializeField] private bool m_useDebugging = false;
+
     private void Awake()
     {
         List<PhysicsComponentBase> comps = new List<PhysicsComponentBase>(GetComponents<PhysicsComponentBase>());
-        m_physicsComponents = comps.OrderBy(pc => (int) pc.ForceApplicationMode).ToArray();
+        m_physicsComponents = comps.OrderBy(pc => (int)pc.ForceApplicationMode).ToArray();
 
-        m_collisionsEnabled = TryGetComponent(out m_collisionComponent);
-        m_friction = GetComponent<Friction>();
+        if (m_collisionsEnabled = TryGetComponent(out m_collisionComponent))
+        {
+            
+        }
     }
 
     private void Start()
     {
         PhysicsManager.AddToLoop(this);
+        if (m_collisionsEnabled)
+            m_mass = m_collisionComponent.Material.Density() * m_collisionComponent.Volume();
+    }
+
+    void Reset()
+    {
+        m_velocity = Vector3.zero;
+        m_summatedForces = Vector3.zero;
     }
 
     public void Move()
     {
-        Debug.Log("moving");
-        
         m_positionLastFrame = transform.position;
         m_summatedForces = Vector3.zero;
-        
+
         for (int i = 0; i < m_physicsComponents.Length; i++)
         {
-            m_summatedForces += m_physicsComponents[i].GetForce(m_velocity, m_collisionComponent.DisplacementThisFrame);
+            m_summatedForces += m_physicsComponents[i].GetForce(m_velocity);
         }
 
-        Vector3 acceleration = m_summatedForces / m_mass;
-        m_velocity += acceleration * PhysicsBodyUpdateSystem.TimeStep;
+        m_velocity += (m_summatedForces / m_mass) * PhysicsBodyUpdateSystem.TimeStep;
+        if (m_collisionsEnabled)
+            m_collisionComponent.TheoreticalPosition = transform.position + (m_velocity * PhysicsBodyUpdateSystem.TimeStep);
+    }
+
+    public void PostCollision()
+    {
         transform.position += m_velocity * PhysicsBodyUpdateSystem.TimeStep;
     }
-
-    public void Unintersect()
+    
+    public void AddImpulse(Vector3 impulse, float otherMass)
     {
-        if (m_collisionsEnabled)
-        {
-            Debug.Log("unintersecting");
-            
-            transform.position = m_collisionComponent.ResolveCollisions(transform.position, m_velocity, out m_velocity);
-            /*Vector3 friction = m_friction.GetForce(m_velocity, Vector3.zero) * PhysicsBodyUpdateSystem.TimeStep;
-            m_velocity += friction;
-            transform.position += friction * PhysicsBodyUpdateSystem.TimeStep;
-            if (m_velocity.magnitude < 0.001f)
-                m_velocity = Vector3.zero;*/
-        }
+        m_summatedForces += (impulse * otherMass) / PhysicsBodyUpdateSystem.TimeStep;
+        m_velocity += impulse * otherMass;
     }
 
-    public void ApplyPostCollisionVelocity()
+    public void AddImpulseUnscaledTime(Vector3 unscaledImpulse)
     {
-        
+        m_velocity += (unscaledImpulse / m_mass) * PhysicsBodyUpdateSystem.TimeStep;
     }
 
-    public void OverrideVelocity(Vector3 velocity) => m_velocity = velocity;
+    [ContextMenu("Apply Random Force")]
+    public void ApplyRandomForce()
+    {
+        Vector3 dir = new Vector3(Random.Range(0f, 1.0f), Random.Range(0f, 1.0f), Random.Range(0f, 1.0f)).normalized;
+        AddImpulse(dir, Random.Range(1f, 25f));
+    }
 
     protected virtual void OnDestroy()
     {
@@ -91,10 +94,10 @@ public class PhysicsBody : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        if (!Application.isPlaying) return;
+        if (!m_useDebugging) return;
+        else if (!Application.isPlaying) return;
 
         Gizmos.color = Color.red;
-
-        Gizmos.DrawLine(transform.position, transform.position + m_velocity.normalized);
+        Gizmos.DrawLine(transform.position, transform.position + m_velocity);
     }
 }

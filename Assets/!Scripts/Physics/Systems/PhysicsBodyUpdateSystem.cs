@@ -9,8 +9,7 @@ public class PhysicsBodyUpdateSystem
 {
     public const float TimeStep = 0.02f;
     private static float m_timer = 0;
-    static int frameCount = -1;
-    const bool STEP = false;
+
     private static readonly Type[] m_friendsList = new Type[]
     {
         typeof(PhysicsManager),
@@ -54,26 +53,6 @@ public class PhysicsBodyUpdateSystem
             OnUnintersectionUpdate?.Invoke();
             OnPostCollisionUpdate?.Invoke();
         }
-        if (STEP)
-        {
-            switch (frameCount % 4)
-            {
-                case 0:
-                    OnPreCollisionUpdate?.Invoke();
-                    break;
-                case 1:
-                    OnCollisionUpdate?.Invoke();
-                    break;
-                case 2:
-                    OnUnintersectionUpdate?.Invoke();
-                    break;
-                case 3:
-                    OnPostCollisionUpdate?.Invoke();
-                    break;
-            }
-            frameCount++;
-        }
-        
     }
 
     private static PlayerLoopSystem.UpdateFunction GetSubsystemUpdateFunction(Type friend, string methodName)

@@ -34,6 +34,10 @@ public class AABBCollisionComponent : CollisionComponent
         PhysicsManager.OnPhysicsUpdate -= CalculateShape;
     }
 
+    public override float Volume()
+    {
+        return 2.0f * (m_halfExtents.x * m_halfExtents.y * m_halfExtents.z);
+    }
     public override float CrossSectionalArea(Vector3 inNormal)
     {
         m_lastKnownNormal = inNormal;
@@ -53,7 +57,7 @@ public class AABBCollisionComponent : CollisionComponent
     private void CalculateShape(object _, float __) => CalculateShape();
     private void CalculateShape()
     {
-        Quaternion rotation = Rotation;
+        Quaternion rotation = transform.rotation;
 
         m_points[0] = rotation * new Vector3( m_halfExtents.x, -m_halfExtents.y,  m_halfExtents.z); // rbf
         m_points[1] = rotation * new Vector3(-m_halfExtents.x, -m_halfExtents.y,  m_halfExtents.z); // lbf
@@ -82,7 +86,7 @@ public class AABBCollisionComponent : CollisionComponent
         Gizmos.color = Color.blue;
         if (m_lastKnownNormal != Vector3.zero)
         {
-            Gizmos.DrawLine(Center, Center + m_lastKnownNormal);
+            Gizmos.DrawLine(transform.position, transform.position + m_lastKnownNormal);
 
             if (m_projectedHull != null)
             {
@@ -91,7 +95,7 @@ public class AABBCollisionComponent : CollisionComponent
                 Vector3[] projWS = new Vector3[m_projectedHull.Hull.Length];
                 for (int i = 0; i < projWS.Length; i++)
                 {
-                    projWS[i] = p.ToWorldSpace(Center, m_projectedHull.Hull[i]);
+                    projWS[i] = p.ToWorldSpace(transform.position, m_projectedHull.Hull[i]);
                 }
 
                 Gizmos.DrawLineStrip(new(projWS), true);

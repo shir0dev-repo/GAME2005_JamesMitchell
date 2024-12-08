@@ -8,6 +8,7 @@ public class Partition<T> where T : IPartitionable
     public List<T> Objects => m_objects;
     public bool IsEmpty => m_objects.Count == 0;
 
+    public Vector3Int ChunkPos => m_chunkPosition;
     private Vector3Int m_chunkPosition;
     private static Vector3Int s_chunkSize = Vector3Int.zero;
     public Partition(Vector3Int chunkPosition, Vector3Int chunkSize)

@@ -17,7 +17,7 @@ public class Drag : PhysicsComponentBase
         m_collisionEnabled = TryGetComponent(out m_collisionComponent);
     }
 
-    public override Vector3 GetForce(Vector3 initial, Vector3 collisionDisplacement)
+    public override Vector3 GetForce(Vector3 initial)
     {
         float projectedArea;
 

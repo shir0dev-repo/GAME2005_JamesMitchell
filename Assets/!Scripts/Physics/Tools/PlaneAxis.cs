@@ -3,32 +3,39 @@ using UnityEngine;
 [System.Serializable]
 public class PlaneAxis
 {
+    public Vector3 Origin;
     public Vector3 Normal;
     public Vector3 Tangent;
     public Vector3 Bitangent;
-    public float DistanceFromOrigin;
 
     public PlaneAxis(Vector3 normal)
     {
         Normal = normal.normalized;
         Tangent = CalculateTangent(Normal);
         Bitangent = CalculateBitangent(Normal, Tangent);
-        DistanceFromOrigin = 0;
+        Origin = Vector3.zero;
     }
-    public PlaneAxis(Vector3 normal, float distanceFromOrigin)
+    public PlaneAxis(Vector3 normal, Vector3 origin)
     {
         Normal = normal.normalized;
         Tangent = CalculateTangent(Normal);
         Bitangent = CalculateBitangent(Normal, Tangent);
-        DistanceFromOrigin = distanceFromOrigin;
+        Origin = origin;
     }
 
-    public void Recalculate(Transform t)
+    public PlaneAxis(Transform t)
     {
         Normal = t.up;
-        Tangent = CalculateTangent(Normal);
-        Bitangent = CalculateBitangent(Normal, Tangent);
-        DistanceFromOrigin = Vector3.Distance(Vector3.zero, t.position);
+        Tangent = t.right;
+        Bitangent = t.forward;
+        Origin = t.position;
+    }
+    public void Recalculate(Transform t)
+    {
+        Normal = t.up.normalized;
+        Tangent = t.right.normalized;// CalculateTangent(Normal);
+        Bitangent = t.forward.normalized;// CalculateBitangent(Normal, Tangent);
+        Origin = t.position;
     }
 
     private static Vector3 CalculateTangent(Vector3 normal)

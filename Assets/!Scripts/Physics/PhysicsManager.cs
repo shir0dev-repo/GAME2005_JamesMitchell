@@ -23,20 +23,11 @@ public class PhysicsManager : InjectedSystem<PhysicsManager>
         OnPhysicsUpdate?.Invoke(Instance, PhysicsBodyUpdateSystem.TimeStep);
     }
 
-    protected override void OnUnintersectionUpdate()
-    {
-        foreach (PhysicsBody pb in m_actors)
-            pb.Unintersect();
-    }
-
     protected override void OnPostCollisionUpdate()
     {
-        Debug.Log("adjusting velocity");
-
         foreach (PhysicsBody pb in m_actors)
-            pb.ApplyPostCollisionVelocity();
+            pb.PostCollision();
     }
-
     public static void AddToLoop(PhysicsBody pb)
     {
         if (pb.SimulationMode == SimulationMode.Kinematic && !m_actors.Contains(pb))

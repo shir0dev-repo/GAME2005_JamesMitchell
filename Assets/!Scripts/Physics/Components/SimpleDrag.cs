@@ -7,7 +7,7 @@ public class SimpleDrag : PhysicsComponentBase
     public float Coefficient => m_coefficient;
     [SerializeField, Range(0.1f, 1.5f)] private float m_coefficient = 0.75f;
 
-    public override Vector3 GetForce(Vector3 initial, Vector3 collisionDisplacement)
+    public override Vector3 GetForce(Vector3 initial)
     {
         return -m_coefficient * initial;
     }

@@ -10,10 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 737b7e9c4fcd4434bb52b5f360ee4507, type: 3}
-  m_Name: Fabric
+  m_Name: Kevlar
   m_EditorClassIdentifier: 
-  ID: 0
-  Name: Cloth
-  Restitution: 0.05
-  StaticFrictionThreshold: 1
-  KineticFrictionCoefficient: 1
+  ID: -1
+  Name: Kevlar
+  m_restitution: 0.35
+  m_staticFrictionThreshold: 0.28
+  m_kineticFrictionCoefficient: 0.4
+  m_density: 1.44
+  m_material: {fileID: 2100000, guid: 251625aaae6ec6042a94bdcdc6bf2082, type: 2}

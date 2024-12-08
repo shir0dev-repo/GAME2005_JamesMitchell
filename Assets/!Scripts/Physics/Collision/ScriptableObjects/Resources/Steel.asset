@@ -12,8 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 737b7e9c4fcd4434bb52b5f360ee4507, type: 3}
   m_Name: Steel
   m_EditorClassIdentifier: 
-  ID: 1
+  ID: -1
   Name: Steel
-  Restitution: 0
-  StaticFrictionThreshold: 0
-  KineticFrictionCoefficient: 0
+  m_restitution: 0.75
+  m_staticFrictionThreshold: 0.74
+  m_kineticFrictionCoefficient: 0.57
+  m_density: 7.85
+  m_material: {fileID: 2100000, guid: 40824a30dd35f754a986ce408c942db1, type: 2}
